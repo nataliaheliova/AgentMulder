@@ -21,7 +21,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="..\output\Debug\$version$\**\AgentMulder.*.dll" target="dotFiles\" />
-    <file src="..\output\Debug\$version$\**\AgentMulder.*.pdb" target="dotFiles\" />    
+    <file src="..\output\$config$\$version$\**\AgentMulder.*.dll" target="dotFiles\" />
+    <file src="..\output\$config$\$version$\**\AgentMulder.*.pdb" target="dotFiles\" />    
   </files>
 </package>
