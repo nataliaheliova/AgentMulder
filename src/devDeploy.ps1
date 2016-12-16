@@ -13,6 +13,14 @@ $dir = Split-Path $MyInvocation.MyCommand.Path;
 Push-Location $dir;
 [Environment]::CurrentDirectory = $PWD;
 
+#check if VS 2015 experimental hive exists
+if (!(Test-Path "$env:LOCALAPPDATA\Microsoft\VisualStudio\14.0$hive"))
+{
+	echo "Visual Studio experimental hive $hive does not exist.";
+	echo "EXTENSION NOT INSTALLED";
+	return;
+}
+
 # copy the main binaries and PDBs
 $targetDir = "$env:LOCALAPPDATA\JetBrains\plugins\ERNI.AgentMulder.$version\dotFiles";
 $binSourcePath = "..\output\$config\$version\AgentMulder.*.dll";
@@ -21,7 +29,7 @@ $pdbSourcePath = "..\output\$config\$version\AgentMulder.*.pdb";
 Copy-Item $binSourcePath $targetDir;
 Copy-Item $pdbSourcePath $targetDir;
 
-# copy container-specific implementations
+# copy container-specific binaries and PDBs
 $targetDir = "$env:LOCALAPPDATA\JetBrains\plugins\ERNI.AgentMulder.$version\dotFiles\Containers";
 New-Item $targetDir -type directory -force | Out-Null
 
