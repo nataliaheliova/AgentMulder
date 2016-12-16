@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using AgentMulder.ReSharper.Domain.Containers;
 using AgentMulder.ReSharper.Domain.Utils;
 using AgentMulder.ReSharper.Plugin.Components;
@@ -53,6 +54,7 @@ namespace AgentMulder.ReSharper.Tests
         private void RunFixture(IEnumerable<string> fileSet, Action action)
         {
             WithSingleProject(fileSet, (lifetime, solution, project) => RunGuarded(action));
+            Task.Delay(5000).Wait();
         }
 
         private static ICSharpFile GetCodeFile(IProject project, string fileName)
