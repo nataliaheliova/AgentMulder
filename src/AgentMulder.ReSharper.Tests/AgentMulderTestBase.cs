@@ -19,7 +19,7 @@ using NUnit.Framework;
 
 namespace AgentMulder.ReSharper.Tests
 {
-    [TestNetFramework45]
+    [TestNetFramework46]
     [TestFileExtension(".cs")]
     public abstract class AgentMulderTestBase<TContainerInfo> : BaseTestWithSingleProject
         where TContainerInfo : IContainerInfo, new()
