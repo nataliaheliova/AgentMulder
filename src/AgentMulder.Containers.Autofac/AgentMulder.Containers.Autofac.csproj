@@ -43,6 +43,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <OutputPath>..\..\output\Release\2016.3\Containers\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="antlr.runtime, Version=2.7.7.1, Culture=neutral, PublicKeyToken=0f493c87b190d7e9, processorArchitecture=MSIL">
@@ -109,7 +110,6 @@
       <HintPath>..\packages\JetBrains.Annotations.10.2.1\lib\net\JetBrains.Annotations.dll</HintPath>
       <Private>True</Private>
     </Reference>
-   
     <Reference Include="Microsoft.Build, Version=15.1.0.0, Culture=neutral, PublicKeyToken=5aaa11a165479571, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.MSBuild.Xplat.Engine.20161013.1.0\lib\net45\Microsoft.Build.dll</HintPath>
       <Private>True</Private>
