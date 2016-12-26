@@ -444,7 +444,6 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Antlr2.Tools.2.7.6.4\build\Antlr2.Tools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Antlr2.Tools.2.7.6.4\build\Antlr2.Tools.targets'))" />
     <Error Condition="!Exists('..\packages\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.2.0.20151217.1\build\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.2.0.20151217.1\build\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.Targets'))" />
-    <Error Condition="!Exists('..\packages\JetBrains.Psi.Features.Cpp.Src.106.0.20160913.92259\build\JetBrains.Psi.Features.Cpp.Src.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JetBrains.Psi.Features.Cpp.Src.106.0.20160913.92259\build\JetBrains.Psi.Features.Cpp.Src.Targets'))" />
     <Error Condition="!Exists('..\packages\JetBrains.Platform.Interop.dotMemoryUnit.Framework.107.0.20161222.212632\build\JetBrains.Platform.Interop.dotMemoryUnit.Framework.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JetBrains.Platform.Interop.dotMemoryUnit.Framework.107.0.20161222.212632\build\JetBrains.Platform.Interop.dotMemoryUnit.Framework.Targets'))" />
     <Error Condition="!Exists('..\packages\JetBrains.Platform.Core.Shell.107.0.20161222.212316\build\JetBrains.Platform.Core.Shell.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JetBrains.Platform.Core.Shell.107.0.20161222.212316\build\JetBrains.Platform.Core.Shell.Targets'))" />
     <Error Condition="!Exists('..\packages\JetBrains.Platform.Core.Text.107.0.20161222.212632\build\JetBrains.Platform.Core.Text.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JetBrains.Platform.Core.Text.107.0.20161222.212632\build\JetBrains.Platform.Core.Text.Targets'))" />
@@ -466,7 +465,6 @@
     <Error Condition="!Exists('..\packages\JetBrains.Psi.Features.VisualStudio.107.0.20161222.213045\build\JetBrains.Psi.Features.VisualStudio.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JetBrains.Psi.Features.VisualStudio.107.0.20161222.213045\build\JetBrains.Psi.Features.VisualStudio.Targets'))" />
   </Target>
   <Import Project="..\packages\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.2.0.20151217.1\build\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.Targets" Condition="Exists('..\packages\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.2.0.20151217.1\build\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.Targets')" />
-  <Import Project="..\packages\JetBrains.Psi.Features.Cpp.Src.106.0.20160913.92259\build\JetBrains.Psi.Features.Cpp.Src.Targets" Condition="Exists('..\packages\JetBrains.Psi.Features.Cpp.Src.106.0.20160913.92259\build\JetBrains.Psi.Features.Cpp.Src.Targets')" />
   <PropertyGroup>
     <PostBuildEvent>powershell -ExecutionPolicy Bypass -file "$(SolutionDir)devDeploy.ps1" -config $(ConfigurationName) -version 2016.3 -hive AgentMulder</PostBuildEvent>
   </PropertyGroup>
