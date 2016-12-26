@@ -314,6 +314,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AspNetCoreContainerInfo.cs" />
+    <Compile Include="Patterns\AddMvc.cs" />
     <Compile Include="Patterns\AddScoped.cs" />
     <Compile Include="Patterns\AddSingleton.cs" />
     <Compile Include="Patterns\AddTransient.cs" />
