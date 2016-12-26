@@ -55,17 +55,26 @@ namespace AgentMulder.Containers.AspNetCore
             {
                 var serviceType = invocationExpression.TypeArguments[0] as IDeclaredType;
 
-                IDeclaredType implementationType = null;
                 if (invocationExpression.Arguments.Count == 0)
                 {
-                    implementationType = serviceType;
+                    var registration = CreateRegistration(invocationExpression, serviceType, serviceType);
+                    if (registration != null)
+                    {
+                        yield return registration;
+                    }
                 }
                 else if (invocationExpression.Arguments.Count == 1)
                 {
-                    implementationType = GetArgumentType(invocationExpression);
+                    var implementationTypes = GetArgumentTypes(invocationExpression);
+                    foreach (var implementationType in implementationTypes)
+                    {
+                        var registration = CreateRegistration(invocationExpression, serviceType, implementationType);
+                        if (registration != null)
+                        {
+                            yield return registration;
+                        }
+                    }
                 }
-
-                return CreateRegistration(invocationExpression, serviceType, implementationType);
             }
 
             if (invocationExpression.TypeArguments.Count == 2)
@@ -73,13 +82,15 @@ namespace AgentMulder.Containers.AspNetCore
                 var serviceType = invocationExpression.TypeArguments[0] as IDeclaredType;
                 var implementationType = invocationExpression.TypeArguments[1] as IDeclaredType;
 
-                return CreateRegistration(invocationExpression, serviceType, implementationType);
+                var registration = CreateRegistration(invocationExpression, serviceType, implementationType);
+                if (registration != null)
+                {
+                    yield return registration; 
+                }
             }
-
-            return Enumerable.Empty<IComponentRegistration>();
         }
 
-        private IDeclaredType GetArgumentType(IInvocationExpression invocationExpression, int argumentIndex = 0)
+        private IEnumerable<IDeclaredType> GetArgumentTypes(IInvocationExpression invocationExpression, int argumentIndex = 0)
         {
             // match typeof() expressions
             var typeOfExpression = invocationExpression.ArgumentList.Arguments[argumentIndex].Expression as ITypeofExpression;
@@ -87,14 +98,14 @@ namespace AgentMulder.Containers.AspNetCore
             {
                 var typeElement = (IDeclaredType)typeOfExpression.ArgumentType;
 
-                return typeElement;
+                yield return typeElement;
             }
 
             // new statement
             var objectCreationExpression = invocationExpression.ArgumentList.Arguments[argumentIndex].Expression as IObjectCreationExpression;
             if (objectCreationExpression != null)
             {
-                return objectCreationExpression.GetExpressionType() as IDeclaredType;
+                yield return objectCreationExpression.GetExpressionType() as IDeclaredType;
             }
 
             // match lambda expressions
@@ -104,10 +115,16 @@ namespace AgentMulder.Containers.AspNetCore
                 IDeclaredType declaredType = null;
                 if (lambdaExpression.BodyBlock != null)
                 {
-                    declaredType =
-                        lambdaExpression.BodyBlock.Statements.OfType<IReturnStatement>()
-                            .Last()
-                            .Value.GetExpressionType() as IDeclaredType;
+                    var returnTypes =
+                        lambdaExpression.BodyBlock.Descendants<IReturnStatement>()
+                            .ToEnumerable()
+                            .Select(_ => _.Value.GetExpressionType() as IDeclaredType)
+                            .Where(_ => _ != null && _.Classify == TypeClassification.REFERENCE_TYPE);
+
+                    foreach (var returnType in returnTypes)
+                    {
+                        yield return returnType;
+                    }
                 }
                 else if (lambdaExpression.BodyExpression != null)
                 {
@@ -116,19 +133,19 @@ namespace AgentMulder.Containers.AspNetCore
 
                 if (declaredType != null && declaredType.Classify == TypeClassification.REFERENCE_TYPE)
                 {
-                    return declaredType;
+                    yield return declaredType;
                 }
             }
 
             var referenceExpression = invocationExpression.ArgumentList.Arguments[argumentIndex].Expression as IReferenceExpression;
-            return referenceExpression?.GetExpressionType() as IDeclaredType;
+            yield return referenceExpression?.GetExpressionType() as IDeclaredType;
         }
 
-        private IEnumerable<IComponentRegistration> CreateRegistration(IInvocationExpression invocationExpression, IDeclaredType first, IDeclaredType last)
+        private IComponentRegistration CreateRegistration(IInvocationExpression invocationExpression, IDeclaredType first, IDeclaredType last)
         {
             if (first == null || last == null)
             {
-                yield break;
+                return null;
             }
 
             var fromType = first.GetTypeElement();
@@ -136,30 +153,47 @@ namespace AgentMulder.Containers.AspNetCore
 
             if (fromType != null && toType != null)
             {
-                yield return fromType.Equals(toType)
+                return fromType.Equals(toType)
                     ? new ComponentRegistration(invocationExpression, fromType)
                     : new ComponentRegistration(invocationExpression, fromType, toType);
             }
+
+            return null;
         }
 
         private IEnumerable<IComponentRegistration> FromArguments(IInvocationExpression invocationExpression)
         {
             if (invocationExpression.Arguments.Count == 1)
             {
-                var registeredType = GetArgumentType(invocationExpression);
+                var registeredTypes = GetArgumentTypes(invocationExpression);
 
-                return CreateRegistration(invocationExpression, registeredType, registeredType);
+                foreach (var registeredType in registeredTypes)
+                {
+                    var registration = CreateRegistration(invocationExpression, registeredType, registeredType);
+                    if (registration != null)
+                    {
+                        yield return registration;
+                    }
+                }
             }
 
             if (invocationExpression.Arguments.Count == 2)
             {
-                var serviceType = GetArgumentType(invocationExpression, argumentIndex: 0);
-                var implementationType = GetArgumentType(invocationExpression, argumentIndex: 1);
+                var serviceTypes = GetArgumentTypes(invocationExpression, argumentIndex: 0);
+                var implementationTypes = GetArgumentTypes(invocationExpression, argumentIndex: 1);
 
-                return CreateRegistration(invocationExpression, serviceType, implementationType);
+                foreach (var serviceType in serviceTypes)
+                {
+                    foreach (var implementationType in implementationTypes)
+                    {
+                        var registration = CreateRegistration(invocationExpression, serviceType, implementationType);
+                        if (registration != null)
+                        {
+                            yield return registration;
+                        }
+                    }
+                }
             }
-
-            return Enumerable.Empty<IComponentRegistration>();
         }
     }
 }
