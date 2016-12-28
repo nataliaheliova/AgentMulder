@@ -17,8 +17,7 @@ namespace AgentMulder.Containers.AspNetCore.Patterns
             new CSharpStructuralSearchPattern("$container$.AddMvc()",
                 new ExpressionPlaceholder("container", "Microsoft.Extensions.DependencyInjection.IServiceCollection"));
 
-        public AddMvc()
-            : base(pattern)
+        public AddMvc() : base(pattern)
         {
         }
 
@@ -32,6 +31,9 @@ namespace AgentMulder.Containers.AspNetCore.Patterns
             }
         }
 
+        /// <summary>
+        /// Custom registration, limiting the valid types to descendants of the Microsoft.AspNetCore.Mvc.Controller class.
+        /// </summary>
         private class MvcControllerRegistration : FilteredRegistrationBase
         {
             public MvcControllerRegistration(ITreeNode registrationRootElement)

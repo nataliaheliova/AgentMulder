@@ -14,8 +14,7 @@ namespace AgentMulder.Containers.AspNetCore.Patterns
                 new ExpressionPlaceholder("container", "Microsoft.Extensions.DependencyInjection.IServiceCollection"),
                 new ArgumentPlaceholder("arguments", 0, 2));
 
-        public AddSingleton()
-            : base(pattern)
+        public AddSingleton() : base(pattern)
         {
         }
     }
