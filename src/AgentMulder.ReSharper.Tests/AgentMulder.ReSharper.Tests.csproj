@@ -396,6 +396,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AgentMulder.Containers.AspNetCore\AgentMulder.Containers.AspNetCore.csproj">
+      <Project>{5315800e-a7d4-4ad6-8090-965686b43bc6}</Project>
+      <Name>AgentMulder.Containers.AspNetCore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AgentMulder.Containers.Autofac\AgentMulder.Containers.Autofac.csproj">
       <Project>{0e0932d9-4745-4408-83df-5527326760d3}</Project>
       <Name>AgentMulder.Containers.Autofac</Name>
@@ -435,6 +439,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AgentMulderTestBase.cs" />
+    <Compile Include="AspNetCore\RegisterTypesTest.cs" />
     <Compile Include="Autofac\ContainerBuilderTests.cs" />
     <Compile Include="Autofac\MvcTests.cs" />
     <Compile Include="Autofac\RegisterAssemblyTypesTests.cs" />

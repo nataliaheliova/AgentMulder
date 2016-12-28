@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using AgentMulder.ReSharper.Domain.Containers;
 using AgentMulder.ReSharper.Domain.Utils;
 using AgentMulder.ReSharper.Plugin.Components;
@@ -27,11 +26,9 @@ namespace AgentMulder.ReSharper.Tests
         private static readonly Regex patternCountRegex = new Regex(@"// Patterns: (?<patterns>\d+)");
         private static readonly Regex matchesRegex      = new Regex(@"// Matches: (?<files>.*?)\r?\n");
         private static readonly Regex notMatchesRegex   = new Regex(@"// NotMatches: (?<files>.*?)\r?\n");
+        private IContainerInfo containerInfo;
 
-        protected virtual IContainerInfo ContainerInfo
-        {
-            get { return new TContainerInfo(); }
-        }
+        protected virtual IContainerInfo ContainerInfo => containerInfo ?? (containerInfo = new TContainerInfo());
 
         private void RunTest(string fileName, Action<IPatternManager> action)
         {
@@ -44,6 +41,7 @@ namespace AgentMulder.ReSharper.Tests
                 var solutionAnalyzer = Solution.GetComponent<SolutionAnalyzer>();
                 solutionAnalyzer.KnownContainers.Clear();
                 solutionAnalyzer.KnownContainers.Add(ContainerInfo);
+                // ContainerInfo.RemovePlaceholderTypes(); // note: uncomment to run patterns without type specification
 
                 var patternManager = Solution.GetComponent<IPatternManager>();
 
