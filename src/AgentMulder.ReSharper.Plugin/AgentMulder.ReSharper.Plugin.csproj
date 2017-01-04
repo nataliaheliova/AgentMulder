@@ -314,7 +314,6 @@
     <Compile Include="Components\PatternSearcher.cs" />
     <Compile Include="Components\SolutionAnalyzer.cs" />
     <Compile Include="Components\TypeUsageManager.cs" />
-    <Compile Include="Components\UnusedWarningSuppressor.cs" />
     <Compile Include="Daemon\ContainerRegistrationAnalysisStage.cs" />
     <Compile Include="Daemon\ContainerRegistrationAnalysisStageProcess.cs" />
     <Compile Include="Highlighting\ContainerGutterMark.cs" />
