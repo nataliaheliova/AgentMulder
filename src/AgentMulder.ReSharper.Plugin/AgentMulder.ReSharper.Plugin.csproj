@@ -422,7 +422,8 @@
     <Compile Include="Highlighting\ContainerGutterMark.cs" />
     <Compile Include="Highlighting\IClickableGutterHighlighting.cs" />
     <Compile Include="Highlighting\RegisteredByContainerHighlighting.cs" />
-    <Compile Include="Navigation\GotoRegistrationsNavigationProvider.cs" />
+    <Compile Include="Navigation\GotoInstantiationNavigationProvider.cs" />
+    <Compile Include="Navigation\GotoRegisteredComponentsNavigationProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ZoneMarker.cs" />
   </ItemGroup>

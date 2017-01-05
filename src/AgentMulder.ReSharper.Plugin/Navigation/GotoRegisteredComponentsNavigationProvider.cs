@@ -24,7 +24,7 @@ using JetBrains.TreeModels;
 namespace AgentMulder.ReSharper.Plugin.Navigation
 {
     [ContextNavigationProvider]
-    public class GotoRegistrationsNavigationProvider : INavigateFromHereProvider
+    public class GotoRegisteredComponentsNavigationProvider : INavigateFromHereProvider
     {
         public IEnumerable<ContextNavigation> CreateWorkflow(IDataContext dataContext)
         {

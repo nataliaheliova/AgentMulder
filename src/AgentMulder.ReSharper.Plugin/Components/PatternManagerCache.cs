@@ -188,5 +188,13 @@ namespace AgentMulder.ReSharper.Plugin.Components
             ProjectFileType languageType = sourceFile.LanguageType;
             return !languageType.IsNullOrUnknown() && projectFileTypeCoordinator.TryGetService(languageType) != null;
         }
+
+        public IEnumerable<RegistrationInfo> GetAllRegistrations()
+        {
+            lock (lockObject)
+            {
+                return registrationsMap.Values;
+            }
+        }
     }
 }
