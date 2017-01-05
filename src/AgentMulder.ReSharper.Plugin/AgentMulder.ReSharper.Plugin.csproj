@@ -410,10 +410,12 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Components\IPatternManager.cs" />
+    <Compile Include="Components\IRegisteredTypeCollector.cs" />
     <Compile Include="Components\IRegistrationInfo.cs" />
     <Compile Include="Components\ITypeUsageManager.cs" />
     <Compile Include="Components\PatternManagerCache.cs" />
     <Compile Include="Components\PatternSearcher.cs" />
+    <Compile Include="Components\RegisteredTypeCollector.cs" />
     <Compile Include="Components\SolutionAnalyzer.cs" />
     <Compile Include="Components\TypeUsageManager.cs" />
     <Compile Include="Components\UnusedWarningSuppressor.cs" />

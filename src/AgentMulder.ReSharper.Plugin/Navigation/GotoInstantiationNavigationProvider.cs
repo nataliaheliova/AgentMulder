@@ -14,8 +14,6 @@ using JetBrains.ReSharper.Feature.Services.Occurrences;
 using JetBrains.ReSharper.Feature.Services.Tree;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
-using JetBrains.ReSharper.Psi.Files;
-using JetBrains.ReSharper.Psi.Search;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.Psi.Util;
 using JetBrains.ReSharper.Resources.Shell;
@@ -35,33 +33,20 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
             }
 
             var patternManager = solution.GetComponent<IPatternManager>();
-            var navigationExecutionHost = DefaultNavigationExecutionHost.GetInstance(solution);
-            var executions = GetNavigateToRegistrationAction(dataContext, navigationExecutionHost, patternManager, solution);
+            var typeCollector = solution.GetComponent<IRegisteredTypeCollector>();
 
-            var i = 0;
-            foreach (var action in executions)
+            var navigationExecutionHost = DefaultNavigationExecutionHost.GetInstance(solution);
+            var navigations = GetNavigateToRegistrationAction(dataContext, navigationExecutionHost, patternManager, solution, typeCollector);
+
+            foreach (var navigation in navigations)
             {
-                switch (i)
-                {
-                    case 0:
-                        yield return new ContextNavigation("Matching Component Registration", "GotoRegistration",
-                            NavigationActionGroup.Blessed,
-                            action, "GotoRegistrationShort");
-                        break;
-                    case 1:
-                        yield return new ContextNavigation("Matching Components", "GotoMatchingRegistered",
-                            NavigationActionGroup.Blessed,
-                            action, "GotoMatchingRegisteredShort");
-                        break;
-                }
-                  
-                ++i;
+                yield return navigation;
             }
         }
 
-        private static IEnumerable<Action> GetNavigateToRegistrationAction(IDataContext dataContext,
+        private static IEnumerable<ContextNavigation> GetNavigateToRegistrationAction(IDataContext dataContext,
             INavigationExecutionHost navigationExecutionHost, [NotNull] IPatternManager patternManager,
-            [NotNull] ISolution solution)
+            [NotNull] ISolution solution, IRegisteredTypeCollector typeCollector)
         {
             var parameterNode = dataContext.GetSelectedTreeNode<ICSharpParameterDeclaration>();
 
@@ -87,20 +72,54 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
                 yield break;
             }
 
-            var searchDomain = SearchDomainFactory.Instance.CreateSearchDomain(solution, false);
-            var visitor = new RegisteredTypeCollector(allRegistrations);
+            var registeredTypes = typeCollector.GetRegisteredTypes();
 
-            searchDomain.Accept(visitor);
-
-            if (visitor.MatchingTypes.Count == 0)
+            if (registeredTypes.Count == 0)
             {
                 // no registrations
                 yield break;
             }
 
-            var typesMatchingParameter = visitor.MatchingTypes.Where(type => MatchTypes(parameterNode, type)).ToList();
+            var typesMatchingParameter = registeredTypes.Where(type => MatchTypes(parameterNode, type)).ToList();
 
-            yield return () =>
+            if (!typesMatchingParameter.Any())
+            {
+                yield break;
+            }
+
+            yield return
+                new ContextNavigation("Matching Component Registration", "GotoRegistration",
+                    NavigationActionGroup.Blessed,
+                    NavigateToMatchingRegistrationsAction(dataContext, navigationExecutionHost, solution,
+                        typesMatchingParameter), "GotoRegistrationShort");
+
+            yield return
+                new ContextNavigation("Matching Components", "GotoMatchingRegistered", NavigationActionGroup.Blessed,
+                    NaviagetToMatchingComponentsAction(dataContext, navigationExecutionHost, solution,
+                        typesMatchingParameter), "GotoMatchingRegisteredShort");
+        }
+
+        private static Action NaviagetToMatchingComponentsAction(IDataContext dataContext, INavigationExecutionHost navigationExecutionHost, ISolution solution, List<Tuple<ITypeDeclaration, RegistrationInfo>> typesMatchingParameter)
+        {
+            return () =>
+            {
+                var occurences =
+                    typesMatchingParameter.Distinct(_ => _.Item1)
+                        .Select(_ => new DeclaredElementOccurrence(_.Item1.DeclaredElement))
+                        .Cast<IOccurrence>()
+                        .ToList();
+
+                navigationExecutionHost.ShowContextPopupMenu(dataContext, occurences,
+                    DescriptorBuilderForRegistrations(solution, occurences, "Matching Components"),
+                    new OccurrencePresentationOptions(IconDisplayStyle.OccurrenceEntityType), true,
+                    "Matching Components");
+            };
+        }
+
+        private static Action NavigateToMatchingRegistrationsAction(IDataContext dataContext,
+            INavigationExecutionHost navigationExecutionHost, ISolution solution, List<Tuple<ITypeDeclaration, RegistrationInfo>> typesMatchingParameter)
+        {
+            return () =>
             {
                 var occurences =
                     typesMatchingParameter.Distinct(_ => _.Item2)
@@ -116,22 +135,6 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
                     new OccurrencePresentationOptions(IconDisplayStyle.OccurrenceEntityType), true,
                     "Matching Component Registrations");
             };
-
-            yield return () =>
-            {
-                var occurences =
-                    typesMatchingParameter.Distinct(_ => _.Item1)
-                        .Select(
-                            _ =>
-                                new DeclaredElementOccurrence(_.Item1.DeclaredElement))
-                        .Cast<IOccurrence>()
-                        .ToList();
-
-                navigationExecutionHost.ShowContextPopupMenu(dataContext, occurences,
-                    DescriptorBuilderForRegistrations(solution, occurences, "Matching Components"),
-                    new OccurrencePresentationOptions(IconDisplayStyle.OccurrenceEntityType), true,
-                    "Matching Components");
-            };
         }
 
         private static bool MatchTypes(ICSharpParameterDeclaration parameterNode, Tuple<ITypeDeclaration, RegistrationInfo> _)
@@ -143,50 +146,6 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
         private static Func<IOccurrenceBrowserDescriptor> DescriptorBuilderForRegistrations(ISolution solution, IList<IOccurrence> occurences, string title)
         {
             return () => new RegisteredComponentDescriptor(solution, occurences, title);
-        }
-
-        private class RegisteredTypeCollector : SearchDomainVisitor
-        {
-            private readonly List<RegistrationInfo> registrations;
-            public override bool ProcessingIsFinished { get; } = false;
-
-            public List<Tuple<ITypeDeclaration, RegistrationInfo>> MatchingTypes { get; } = new List<Tuple<ITypeDeclaration, RegistrationInfo>>();
-
-            public RegisteredTypeCollector(IEnumerable<RegistrationInfo> registrations)
-            {
-                this.registrations = registrations.ToList();
-            }
-
-            public override void VisitElement(ITreeNode element)
-            {
-                var typeDeclaration = element as ITypeDeclaration;
-
-                if (typeDeclaration == null)
-                {
-                    foreach (var treeNode in element.Children())
-                    {
-                        VisitElement(treeNode);
-                    }
-                }
-                else
-                {
-                    var matchingRegistration =
-                        registrations.FirstOrDefault(_ => _.Registration.IsSatisfiedBy(typeDeclaration.DeclaredElement));
-                    if (matchingRegistration != null)
-                    {
-                        MatchingTypes.Add(new Tuple<ITypeDeclaration, RegistrationInfo>(typeDeclaration, matchingRegistration));
-                    }
-                }
-            }
-
-            public override void VisitPsiSourceFile(IPsiSourceFile sourceFile)
-            {
-                base.VisitPsiSourceFile(sourceFile);
-                foreach (var psiFile in sourceFile.GetPsiServices().Files.GetPsiFiles(sourceFile))
-                {
-                    VisitElement(psiFile);
-                }
-            }
         }
 
         private class RegisteredComponentDescriptor : OccurrenceBrowserDescriptor

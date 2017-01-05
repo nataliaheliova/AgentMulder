@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AgentMulder.ReSharper.Domain.Registrations;
 using AgentMulder.ReSharper.Plugin.Components;
 using JetBrains.Annotations;
 using JetBrains.Application.DataContext;
@@ -15,8 +14,6 @@ using JetBrains.ReSharper.Feature.Services.Navigation.ExecutionHosting;
 using JetBrains.ReSharper.Feature.Services.Occurrences;
 using JetBrains.ReSharper.Feature.Services.Tree;
 using JetBrains.ReSharper.Psi;
-using JetBrains.ReSharper.Psi.Files;
-using JetBrains.ReSharper.Psi.Search;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.Resources.Shell;
 using JetBrains.TreeModels;
@@ -35,20 +32,22 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
             }
 
             var patternManager = solution.GetComponent<IPatternManager>();
+            var typeCollector = solution.GetComponent<IRegisteredTypeCollector>();
+
             var navigationExecutionHost = DefaultNavigationExecutionHost.GetInstance(solution);
-            var execution = GetNavigationAction(dataContext, navigationExecutionHost, patternManager, solution);
+            var execution = GetNavigationAction(dataContext, navigationExecutionHost, patternManager, solution, typeCollector);
 
             if (execution != null)
             {
                 yield return
-                    new ContextNavigation("&Registered Components", "GotoRegistered", NavigationActionGroup.Blessed,
+                    new ContextNavigation("Registered Components", "GotoRegistered", NavigationActionGroup.Blessed,
                         execution, "GotoRegisteredShort");
             }
         }
 
         private static Action GetNavigationAction(IDataContext dataContext,
             INavigationExecutionHost navigationExecutionHost, [NotNull] IPatternManager patternManager,
-            [NotNull] ISolution solution)
+            [NotNull] ISolution solution, [NotNull] IRegisteredTypeCollector typeCollector)
         {
             var invokedNode = dataContext.GetSelectedTreeNode<IExpression>();
 
@@ -60,27 +59,27 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
                 return null;
             }
 
-            var registration = patternManager.GetRegistrationsForFile(psiSourceFile)
-                .FirstOrDefault(r => r.Registration.RegistrationElement.Children().Contains(invokedNode));
+            var registration =
+                patternManager.GetRegistrationsForFile(psiSourceFile)
+                    .FirstOrDefault(r => r.Registration.RegistrationElement.Children().Contains(invokedNode));
             if (registration == null)
             {
                 return null;
             }
 
-            var searchDomain = SearchDomainFactory.Instance.CreateSearchDomain(solution, false);
-            var visitor = new RegisteredComponentVisitor(registration.Registration);
+            var registeredTypes = typeCollector.GetRegisteredTypes();
 
-            searchDomain.Accept(visitor);
-
-            if (visitor.MatchingTypes.Count == 0)
+            if (registeredTypes.Count == 0)
             {
+                // no registrations
                 return null;
             }
 
             return () =>
             {
                 var occurences =
-                    visitor.MatchingTypes.Where(_ => _.DeclaredElement != null)
+                    registeredTypes.Select(_ => _.Item1)
+                        .Where(_ => _.DeclaredElement != null)
                         .Select(_ => new DeclaredElementOccurrence(_.DeclaredElement))
                         .Cast<IOccurrence>()
                         .ToList();
@@ -95,48 +94,6 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
         private static Func<IOccurrenceBrowserDescriptor> DescriptorBuilder(ISolution solution, IEnumerable<IOccurrence> occurences)
         {
             return () => new RegisteredComponentDescriptor(solution, occurences);
-        }
-
-        private class RegisteredComponentVisitor : SearchDomainVisitor
-        {
-            private readonly IComponentRegistration registration;
-            public override bool ProcessingIsFinished { get; } = false;
-
-            public List<ITypeDeclaration> MatchingTypes { get; } = new List<ITypeDeclaration>();
-
-            public RegisteredComponentVisitor(IComponentRegistration registration)
-            {
-                this.registration = registration;
-            }
-
-            public override void VisitElement(ITreeNode element)
-            {
-                var typeDeclaration = element as ITypeDeclaration;
-
-                if (typeDeclaration == null)
-                {
-                    foreach (var treeNode in element.Children())
-                    {
-                        VisitElement(treeNode);
-                    }
-                }
-                else
-                {
-                    if (registration.IsSatisfiedBy(typeDeclaration.DeclaredElement))
-                    {
-                        MatchingTypes.Add(typeDeclaration);
-                    }
-                }
-            }
-
-            public override void VisitPsiSourceFile(IPsiSourceFile sourceFile)
-            {
-                base.VisitPsiSourceFile(sourceFile);
-                foreach (var psiFile in sourceFile.GetPsiServices().Files.GetPsiFiles(sourceFile))
-                {
-                    VisitElement(psiFile);
-                }
-            }
         }
 
         private class RegisteredComponentDescriptor : OccurrenceBrowserDescriptor
