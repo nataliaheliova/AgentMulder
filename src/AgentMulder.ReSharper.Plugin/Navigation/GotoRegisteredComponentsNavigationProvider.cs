@@ -23,6 +23,8 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
     [ContextNavigationProvider]
     public class GotoRegisteredComponentsNavigationProvider : INavigateFromHereProvider
     {
+        private const string ActionName = "Registered DI Components";
+
         public IEnumerable<ContextNavigation> CreateWorkflow(IDataContext dataContext)
         {
             var solution = dataContext.GetData(ProjectModelDataConstants.SOLUTION);
@@ -40,7 +42,7 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
             if (execution != null)
             {
                 yield return
-                    new ContextNavigation("Registered Components", "GotoRegistered", NavigationActionGroup.Blessed,
+                    new ContextNavigation(ActionName, "GotoRegistered", NavigationActionGroup.Blessed,
                         execution, "GotoRegisteredShort");
             }
         }
@@ -86,8 +88,7 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
 
                 navigationExecutionHost.ShowContextPopupMenu(dataContext, occurences,
                     DescriptorBuilder(solution, occurences),
-                    new OccurrencePresentationOptions(IconDisplayStyle.OccurrenceEntityType), true,
-                    "Registered Components");
+                    new OccurrencePresentationOptions(IconDisplayStyle.OccurrenceEntityType), true, ActionName);
             };
         }
 
@@ -114,7 +115,7 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
                     treeSimpleModel.Insert(null, occurrence);
                 }
 
-                Title.Value = "Registered Components";
+                Title.Value = ActionName;
             }
 
             public override TreeModel Model { get; }
@@ -122,7 +123,7 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
             protected override void SetResults(ICollection<IOccurrence> items, IProgressIndicator indicator = null, bool mergeItems = true)
             {
                 base.SetResults(items, indicator, mergeItems);
-                this.RequestUpdate(UpdateKind.Display, true, (IEnumerable<TreeModelNode>)null);
+                this.RequestUpdate(UpdateKind.Display, true);
             }
         }
     }

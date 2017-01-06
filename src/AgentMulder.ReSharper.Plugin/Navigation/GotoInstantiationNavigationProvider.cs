@@ -24,6 +24,9 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
     [ContextNavigationProvider]
     public class GotoInstantiationNavigationProvider : INavigateFromHereProvider
     {
+        private const string matchingDiRegistration = "Matching DI Registrations";
+        private const string matchingDiComponents = "Matching DI Components";
+
         public IEnumerable<ContextNavigation> CreateWorkflow(IDataContext dataContext)
         {
             var solution = dataContext.GetData(ProjectModelDataConstants.SOLUTION);
@@ -51,7 +54,7 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
             var parameterNode = dataContext.GetSelectedTreeNode<ICSharpParameterDeclaration>();
 
             if (parameterNode == null || parameterNode.Type.IsResolved == false ||
-                parameterNode.Type.Classify != TypeClassification.REFERENCE_TYPE)
+                parameterNode.Type.Classify != TypeClassification.REFERENCE_TYPE || parameterNode.Type.IsArray())
             {
                 // must be parameter declaration, with resolved type, and a reference type
                 yield break;
@@ -80,7 +83,8 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
                 yield break;
             }
 
-            var typesMatchingParameter = registeredTypes.Where(type => MatchTypes(parameterNode, type)).ToList();
+            var typesMatchingParameter =
+                registeredTypes.Where(typeRegistration => MatchTypes(parameterNode, typeRegistration.Item1)).ToList();
 
             if (!typesMatchingParameter.Any())
             {
@@ -88,18 +92,20 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
             }
 
             yield return
-                new ContextNavigation("Matching Component Registration", "GotoRegistration",
+                new ContextNavigation(matchingDiRegistration, "GotoRegistration",
                     NavigationActionGroup.Blessed,
                     NavigateToMatchingRegistrationsAction(dataContext, navigationExecutionHost, solution,
                         typesMatchingParameter), "GotoRegistrationShort");
 
             yield return
-                new ContextNavigation("Matching Components", "GotoMatchingRegistered", NavigationActionGroup.Blessed,
+                new ContextNavigation(matchingDiComponents, "GotoMatchingRegistered", NavigationActionGroup.Blessed,
                     NaviagetToMatchingComponentsAction(dataContext, navigationExecutionHost, solution,
                         typesMatchingParameter), "GotoMatchingRegisteredShort");
         }
 
-        private static Action NaviagetToMatchingComponentsAction(IDataContext dataContext, INavigationExecutionHost navigationExecutionHost, ISolution solution, List<Tuple<ITypeDeclaration, RegistrationInfo>> typesMatchingParameter)
+        private static Action NaviagetToMatchingComponentsAction(IDataContext dataContext,
+            INavigationExecutionHost navigationExecutionHost, ISolution solution,
+            List<Tuple<ITypeDeclaration, RegistrationInfo>> typesMatchingParameter)
         {
             return () =>
             {
@@ -110,14 +116,15 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
                         .ToList();
 
                 navigationExecutionHost.ShowContextPopupMenu(dataContext, occurences,
-                    DescriptorBuilderForRegistrations(solution, occurences, "Matching Components"),
+                    DescriptorBuilderForRegistrations(solution, occurences, matchingDiComponents),
                     new OccurrencePresentationOptions(IconDisplayStyle.OccurrenceEntityType), true,
-                    "Matching Components");
+                    matchingDiRegistration);
             };
         }
 
         private static Action NavigateToMatchingRegistrationsAction(IDataContext dataContext,
-            INavigationExecutionHost navigationExecutionHost, ISolution solution, List<Tuple<ITypeDeclaration, RegistrationInfo>> typesMatchingParameter)
+            INavigationExecutionHost navigationExecutionHost, ISolution solution,
+            List<Tuple<ITypeDeclaration, RegistrationInfo>> typesMatchingParameter)
         {
             return () =>
             {
@@ -131,16 +138,35 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
                         .ToList();
 
                 navigationExecutionHost.ShowContextPopupMenu(dataContext, occurences,
-                    DescriptorBuilderForRegistrations(solution, occurences, "Matching Component Registrations"),
+                    DescriptorBuilderForRegistrations(solution, occurences, matchingDiRegistration),
                     new OccurrencePresentationOptions(IconDisplayStyle.OccurrenceEntityType), true,
-                    "Matching Component Registrations");
+                    matchingDiRegistration);
             };
         }
 
-        private static bool MatchTypes(ICSharpParameterDeclaration parameterNode, Tuple<ITypeDeclaration, RegistrationInfo> _)
+        private static bool MatchTypes(ITypeOwnerDeclaration parameterNode, ITypeDeclaration typeRegistration)
         {
-            return (parameterNode.Type.IsClassType() && _.Item1.DeclaredElement.Equals(parameterNode.Type.GetTypeElement())) ||
-                   _.Item1.DeclaredElement.GetAllSuperTypes().Contains(parameterNode.Type);
+            var registrationTypeElement = typeRegistration.DeclaredElement;
+            if (registrationTypeElement == null)
+            {
+                return false;
+            }
+
+            var parameterType = parameterNode.Type;
+            if (parameterType.IsGenericIEnumerable())
+            {
+                // this is a little complicated
+                // since this is a IEnumerable<T> originally, we first need to perform a type substitution
+                // only after that we can access the actual generic type being used
+                var sub = (parameterType as IDeclaredType).GetSubstitution();
+                parameterType = sub.Apply(sub.Domain[0]);
+            }
+
+            var isSameType = parameterType.IsClassType() &&
+                             registrationTypeElement.Equals(parameterType.GetTypeElement());
+            var isSubType = registrationTypeElement.GetAllSuperTypes().Contains(parameterType);
+
+            return isSameType || isSubType;
         }
 
         private static Func<IOccurrenceBrowserDescriptor> DescriptorBuilderForRegistrations(ISolution solution, IList<IOccurrence> occurences, string title)

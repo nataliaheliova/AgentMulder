@@ -44,16 +44,10 @@ namespace AgentMulder.ReSharper.Plugin.Components
         /// <returns>A read-only collection of type declarations and registration information.</returns>
         public IReadOnlyCollection<Tuple<ITypeDeclaration, RegistrationInfo>> GetRegisteredTypes()
         {
+            ((ICache)this).SyncUpdate(false);
+
             lock (lockObject)
             {
-                if (HasDirtyFiles)
-                {
-                    foreach (var psiSourceFile in dirtyFiles)
-                    {
-                        ((ICache)this).Merge(psiSourceFile, CollectTypes(psiSourceFile));
-                    }
-                }
-
                 return new ReadOnlyCollection<Tuple<ITypeDeclaration, RegistrationInfo>>(matchingTypes.Values.ToList());
             }
         }
@@ -146,10 +140,10 @@ namespace AgentMulder.ReSharper.Plugin.Components
 
         void ICache.OnPsiChange(ITreeNode elementContainingChanges, PsiChangedElementType type)
         {
-            if (type == PsiChangedElementType.Whitespaces)
-            {
-                return;
-            }
+            //if (type == PsiChangedElementType.Whitespaces)
+            //{
+            //    return;
+            //}
 
             var sourceFile = elementContainingChanges?.GetSourceFile();
             if (sourceFile == null)
@@ -173,12 +167,15 @@ namespace AgentMulder.ReSharper.Plugin.Components
         {
             lock (lockObject)
             {
-                foreach (var psiSourceFile in dirtyFiles)
+                if (HasDirtyFiles)
                 {
-                    matchingTypes.RemoveKey(psiSourceFile);
-                }
+                    foreach (var psiSourceFile in dirtyFiles)
+                    {
+                        ((ICache)this).Merge(psiSourceFile, CollectTypes(psiSourceFile));
+                    }
 
-                dirtyFiles.Clear();
+                    dirtyFiles.Clear();
+                }
             }
         }
 
