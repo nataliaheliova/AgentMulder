@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using JetBrains.Application.Progress;
 using JetBrains.DocumentManagers.impl;
@@ -18,7 +17,7 @@ namespace AgentMulder.ReSharper.Plugin.Components
     /// <summary>
     /// A solution component for collecting and caching all DI-registered types.
     /// </summary>
-    /// <remarks>This is constructed and injected autoamtically by the runtime.</remarks>
+    /// <remarks>This is constructed and injected automatically by the runtime.</remarks>
     [SolutionComponent]
     public sealed class RegisteredTypeCollector : IRegisteredTypeCollector, ICache
     {
@@ -27,8 +26,8 @@ namespace AgentMulder.ReSharper.Plugin.Components
         private readonly PsiProjectFileTypeCoordinator projectFileTypeCoordinator;
         private readonly IPatternManager patternManager;
 
-        private readonly OneToListMap<IPsiSourceFile, Tuple<ITypeDeclaration, RegistrationInfo>> matchingTypes =
-            new OneToListMap<IPsiSourceFile, Tuple<ITypeDeclaration, RegistrationInfo>>();
+        private readonly OneToListMap<IPsiSourceFile, ITypeDeclaration> matchingTypes =
+            new OneToListMap<IPsiSourceFile, ITypeDeclaration>();
 
         public RegisteredTypeCollector(PsiProjectFileTypeCoordinator projectFileTypeCoordinator, IPatternManager patternManager)
         {
@@ -42,13 +41,32 @@ namespace AgentMulder.ReSharper.Plugin.Components
         /// Gets all the currently registered types and the registrations that created them.
         /// </summary>
         /// <returns>A read-only collection of type declarations and registration information.</returns>
-        public IReadOnlyCollection<Tuple<ITypeDeclaration, RegistrationInfo>> GetRegisteredTypes()
+        public IEnumerable<Tuple<ITypeDeclaration, RegistrationInfo>> GetRegisteredTypes()
         {
             ((ICache)this).SyncUpdate(false);
 
+            // this cache stores declared types for each source file
+            // when a source file changes, types in that file are recalculated
+            // when asking for matching registrations, all known types are compared to existing registrations
+            // types matching a registration are returned
             lock (lockObject)
             {
-                return new ReadOnlyCollection<Tuple<ITypeDeclaration, RegistrationInfo>>(matchingTypes.Values.ToList());
+                var registrations = patternManager.GetAllRegistrations().ToList();
+
+                if (registrations.Count == 0)
+                {
+                    yield break;
+                }
+
+                foreach (var type in matchingTypes.Values)
+                {
+                    var registration = registrations.FirstOrDefault(_ => _.Registration.IsSatisfiedBy(type.DeclaredElement));
+
+                    if (registration != null)
+                    {
+                        yield return new Tuple<ITypeDeclaration, RegistrationInfo>(type, registration);
+                    }
+                }
             }
         }
 
@@ -118,7 +136,7 @@ namespace AgentMulder.ReSharper.Plugin.Components
             lock (lockObject)
             {
                 matchingTypes.RemoveKey(sourceFile);
-                matchingTypes.AddValueRange(sourceFile, (IEnumerable<Tuple<ITypeDeclaration, RegistrationInfo>>)data);
+                matchingTypes.AddValueRange(sourceFile, (IEnumerable<ITypeDeclaration>)data);
 
                 dirtyFiles.Remove(sourceFile);
             }
@@ -140,10 +158,10 @@ namespace AgentMulder.ReSharper.Plugin.Components
 
         void ICache.OnPsiChange(ITreeNode elementContainingChanges, PsiChangedElementType type)
         {
-            //if (type == PsiChangedElementType.Whitespaces)
-            //{
-            //    return;
-            //}
+            if (type == PsiChangedElementType.Whitespaces)
+            {
+                return;
+            }
 
             var sourceFile = elementContainingChanges?.GetSourceFile();
             if (sourceFile == null)
@@ -184,7 +202,7 @@ namespace AgentMulder.ReSharper.Plugin.Components
             // this is just a debugging facility
         }
 
-        private IEnumerable<Tuple<ITypeDeclaration, RegistrationInfo>> CollectTypes(IPsiSourceFile sourceFile)
+        private IEnumerable<ITypeDeclaration> CollectTypes(IPsiSourceFile sourceFile)
         {
             // initializes the collection visitor and runs it agains the specified file
             var visitor = new RegisteredTypeCollectorVisitor(patternManager.GetAllRegistrations().ToList());
@@ -205,7 +223,7 @@ namespace AgentMulder.ReSharper.Plugin.Components
 
             public override bool ProcessingIsFinished { get; } = false;
 
-            public List<Tuple<ITypeDeclaration, RegistrationInfo>> MatchingTypes { get; } = new List<Tuple<ITypeDeclaration, RegistrationInfo>>();
+            public List<ITypeDeclaration> MatchingTypes { get; } = new List<ITypeDeclaration>();
 
             public RegisteredTypeCollectorVisitor(IList<RegistrationInfo> registrations)
             {
@@ -227,14 +245,8 @@ namespace AgentMulder.ReSharper.Plugin.Components
                 else
                 {
                     // this element is a type declaration
-                    // try to find a registration that matches this type
-                    // if found, add it to the resulting collection
-                    var matchingRegistration =
-                        registrations.FirstOrDefault(_ => _.Registration.IsSatisfiedBy(typeDeclaration.DeclaredElement));
-                    if (matchingRegistration != null)
-                    {
-                        MatchingTypes.Add(new Tuple<ITypeDeclaration, RegistrationInfo>(typeDeclaration, matchingRegistration));
-                    }
+                    // we store it for later
+                    MatchingTypes.Add(typeDeclaration);
                 }
             }
 

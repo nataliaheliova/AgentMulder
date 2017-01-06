@@ -13,6 +13,6 @@ namespace AgentMulder.ReSharper.Plugin.Components
         /// Gets all the currently registered types and the registrations that created them.
         /// </summary>
         /// <returns>A read-only collection of type declarations and registration information.</returns>
-        IReadOnlyCollection<Tuple<ITypeDeclaration, RegistrationInfo>> GetRegisteredTypes();
+        IEnumerable<Tuple<ITypeDeclaration, RegistrationInfo>> GetRegisteredTypes();
     }
 }

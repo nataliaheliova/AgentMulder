@@ -71,7 +71,7 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
 
             var registeredTypes = typeCollector.GetRegisteredTypes();
 
-            if (registeredTypes.Count == 0)
+            if (!registeredTypes.Any())
             {
                 // no registrations
                 return null;
