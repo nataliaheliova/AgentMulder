@@ -62,7 +62,9 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
 
             var constructor = ConstructorDeclarationNavigator.GetByParameterDeclaration(parameterNode);
 
-            if (constructor == null)
+            var constructedType = ClassDeclarationNavigator.GetByConstructorDeclaration(constructor);
+
+            if (constructedType == null)
             {
                 yield break;
             }
@@ -75,7 +77,7 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
                 yield break;
             }
 
-            var registeredTypes = typeCollector.GetRegisteredTypes();
+            var registeredTypes = typeCollector.GetRegisteredTypes().ToList();
 
             if (!registeredTypes.Any())
             {
@@ -83,8 +85,14 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
                 yield break;
             }
 
+            if (!registeredTypes.Any(_ => _.Item2.Registration.IsSatisfiedBy(constructedType.DeclaredElement)))
+            {
+                // type is not registered for DI, therefore it will not have its dependencies injected
+                yield break;
+            }
+
             var typesMatchingParameter =
-                registeredTypes.Where(typeRegistration => MatchTypes(parameterNode, typeRegistration.Item1)).ToList();
+                registeredTypes.Where(typeRegistration => MatchTypes(parameterNode.Type, typeRegistration.Item1)).ToList();
 
             if (!typesMatchingParameter.Any())
             {
@@ -144,15 +152,14 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
             };
         }
 
-        private static bool MatchTypes(ITypeOwnerDeclaration parameterNode, ITypeDeclaration typeRegistration)
+        private static bool MatchTypes(IType parameterType, ITypeDeclaration typeRegistration)
         {
             var registrationTypeElement = typeRegistration.DeclaredElement;
             if (registrationTypeElement == null)
             {
                 return false;
             }
-
-            var parameterType = parameterNode.Type;
+            
             if (parameterType.IsGenericIEnumerable())
             {
                 // this is a little complicated
