@@ -11,6 +11,7 @@ using JetBrains.ReSharper.Psi.Search;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.Util;
 using System.Linq;
+using JetBrains.ReSharper.Psi.VB.Util;
 
 namespace AgentMulder.ReSharper.Plugin.Components
 {
@@ -234,9 +235,9 @@ namespace AgentMulder.ReSharper.Plugin.Components
             {
                 var typeDeclaration = element as ITypeDeclaration;
 
-                if (typeDeclaration == null)
+                if (typeDeclaration == null || !typeDeclaration.DeclaredElement.IsClass())
                 {
-                    // this element is not a type declaration - call recursively on children
+                    // this element is not a class declaration - call recursively on children
                     foreach (var treeNode in element.Children())
                     {
                         VisitElement(treeNode);
@@ -244,7 +245,7 @@ namespace AgentMulder.ReSharper.Plugin.Components
                 }
                 else
                 {
-                    // this element is a type declaration
+                    // this element is a class declaration
                     // we store it for later
                     MatchingTypes.Add(typeDeclaration);
                 }
