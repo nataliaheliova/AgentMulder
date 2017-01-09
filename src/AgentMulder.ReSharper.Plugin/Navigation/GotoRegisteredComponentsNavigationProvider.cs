@@ -69,7 +69,7 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
                 return null;
             }
 
-            var registeredTypes = typeCollector.GetRegisteredTypes();
+            var registeredTypes = typeCollector.GetRegisteredTypes().ToList();
 
             if (!registeredTypes.Any())
             {
@@ -82,6 +82,7 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
                 var occurences =
                     registeredTypes.Select(_ => _.Item1)
                         .Where(_ => _.DeclaredElement != null)
+                        .Where(_ => registration.Registration.IsSatisfiedBy(_.DeclaredElement))
                         .Select(_ => new DeclaredElementOccurrence(_.DeclaredElement))
                         .Cast<IOccurrence>()
                         .ToList();
