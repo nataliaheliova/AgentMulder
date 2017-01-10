@@ -13,8 +13,12 @@ $dir = Split-Path $MyInvocation.MyCommand.Path;
 Push-Location $dir;
 [Environment]::CurrentDirectory = $PWD
 
+$nugetOutputDir = "nuget"
+
+md -Force $nugetOutputDir | Out-Null
+
 $nugetPath = ".nuget\NuGet.exe";
-$nugetParams = "pack AgentMulder.nuspec -nopackageanalysis -outputdirectory nuget -properties 'version=$version;waveVersion=$waveVersion;config=$config'";
+$nugetParams = "pack AgentMulder.nuspec -nopackageanalysis -outputdirectory $nugetOutputDir -properties 'version=$version;waveVersion=$waveVersion;config=$config'";
 
 echo "Running NuGet: ", "$nugetPath $nugetParams"
 iex "$nugetPath $nugetParams";
