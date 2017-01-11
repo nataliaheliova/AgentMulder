@@ -1,23 +1,13 @@
+# Agent Mulder Revival
+
 ![Build Status Badge](https://mar3ek.visualstudio.com/_apis/public/build/definitions/cad5fc04-7859-40e5-be11-2890d454b575/4/badge)
 
+Welcome to the ERNI Community fork of Agent Mudler! We love DI and we love Agent Mulder, so the news of its untimely death ware saddening to us. Fortunately for us, we managed to organize a few people interested in the project and started preparing our resurrection spells.
 
-## Update
-**As of August 9, 2016, this project is no longer maintained. If you're interested in becoming its maintainer, please drop me a line.**
+It is with great pleasure that i give you **Agent Mulder Revival**.
 
+You can find details on the state of the project in the [wiki](https://github.com/ERNICommunity/AgentMulder/wiki/Status).
 
+We hope to have something for you to download soon. In the meantime, feel free to check out the source, the projects, and the wiki for details on what's to come.
 
-![Agent Mulder](http://i.imgur.com/7ZNxO.png)
-
-**Agent Mulder** plugin for ReSharper analyzes DI containers (Dependency Injection, sometimes called Inversion of Control, or IoC containers) in your solution, and provides navigation to and finding usages of types registered or resolved via DI containers.
-
-[![Screenshot](http://i.imgur.com/m4XAze0.png)](https://vimeo.com/41113265)  
-(due to GitHub limitations, the video is viewable at https://vimeo.com/41113265)
-
-### To download Agent Mulder, visit http://hmemcpy.github.io/AgentMulder/
-
-[![Join the chat at https://gitter.im/hmemcpy/AgentMulder](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hmemcpy/AgentMulder?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-#### Special thanks
-
-![ReSharper](http://www.jetbrains.com/img/logos/logo_resharper_small.gif)  
-[ReSharper](http://www.jetbrains.com/resharper/) - the most advanced productivity add-in for Visual Studio!
+_Please note: we are in the process of sorting the details out with the original author of the extension, the ilustrious @hmemcpy_
