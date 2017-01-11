@@ -17,11 +17,11 @@
     </releaseNotes>
     <tags>resharper agent mulder agentmulder ioc di windsor castle autofac ninject structuremap unity simpleinjector</tags>
     <dependencies>
-      <dependency id="Wave" version="$waveVersion$.0"/>
+      <dependency id="Wave" version="$waveVersion$"/>
     </dependencies>
   </metadata>
   <files>
-    <file src="..\output\$config$\$version$\**\AgentMulder.*.dll" target="dotFiles\" />
-    <file src="..\output\$config$\$version$\**\AgentMulder.*.pdb" target="dotFiles\" />    
+    <file src="..\output\$config$\**\AgentMulder.*.dll" target="dotFiles\" />
+    <file src="..\output\$config$\**\AgentMulder.*.pdb" target="dotFiles\" />    
   </files>
 </package>

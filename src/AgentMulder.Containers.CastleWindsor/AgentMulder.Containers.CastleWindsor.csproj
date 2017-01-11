@@ -35,6 +35,7 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <OutputPath>..\..\output\Debug\2016.3\Containers\</OutputPath>
+    <OutputPath>..\..\output\Debug\Containers\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -43,6 +44,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <OutputPath>..\..\output\Release\Containers\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="antlr.runtime, Version=2.7.7.1, Culture=neutral, PublicKeyToken=0f493c87b190d7e9, processorArchitecture=MSIL">
