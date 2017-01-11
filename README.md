@@ -1,3 +1,6 @@
+![Build Status Badge](https://mar3ek.visualstudio.com/_apis/public/build/definitions/cad5fc04-7859-40e5-be11-2890d454b575/4/badge)
+
+
 ## Update
 **As of August 9, 2016, this project is no longer maintained. If you're interested in becoming its maintainer, please drop me a line.**
 
