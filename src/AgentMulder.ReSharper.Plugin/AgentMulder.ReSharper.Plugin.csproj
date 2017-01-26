@@ -35,6 +35,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <OutputPath>..\..\output\Debug\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -43,6 +44,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <OutputPath>..\..\output\Release\</OutputPath>
   </PropertyGroup>
   <PropertyGroup>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
@@ -410,18 +412,21 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Components\IPatternManager.cs" />
+    <Compile Include="Components\IRegisteredTypeCollector.cs" />
     <Compile Include="Components\IRegistrationInfo.cs" />
     <Compile Include="Components\ITypeUsageManager.cs" />
     <Compile Include="Components\PatternManagerCache.cs" />
     <Compile Include="Components\PatternSearcher.cs" />
+    <Compile Include="Components\RegisteredTypeCollector.cs" />
     <Compile Include="Components\SolutionAnalyzer.cs" />
     <Compile Include="Components\TypeUsageManager.cs" />
-    <Compile Include="Components\UnusedWarningSuppressor.cs" />
     <Compile Include="Daemon\ContainerRegistrationAnalysisStage.cs" />
     <Compile Include="Daemon\ContainerRegistrationAnalysisStageProcess.cs" />
     <Compile Include="Highlighting\ContainerGutterMark.cs" />
     <Compile Include="Highlighting\IClickableGutterHighlighting.cs" />
     <Compile Include="Highlighting\RegisteredByContainerHighlighting.cs" />
+    <Compile Include="Navigation\GotoInstantiationNavigationProvider.cs" />
+    <Compile Include="Navigation\GotoRegisteredComponentsNavigationProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ZoneMarker.cs" />
   </ItemGroup>
