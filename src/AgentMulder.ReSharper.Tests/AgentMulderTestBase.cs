@@ -36,7 +36,7 @@ namespace AgentMulder.ReSharper.Tests
             var fileSet = typesPath.GetFiles("*" + Extension)
                                    .SelectNotNull(fs => fs.FullName)
                                    .Concat(new[] { Path.Combine(SolutionItemsBasePath.FullPath, fileName) });
-
+            ContainerInfo.RemovePlaceholderTypes();
             RunFixture(fileSet, () => { 
                 var solutionAnalyzer = Solution.GetComponent<SolutionAnalyzer>();
                 solutionAnalyzer.KnownContainers.Clear();

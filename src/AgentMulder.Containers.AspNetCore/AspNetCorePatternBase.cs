@@ -225,7 +225,7 @@ namespace AgentMulder.Containers.AspNetCore
         /// <param name="serviceType">The type of the service being registered.</param>
         /// <param name="implementationType">The implementation type for the service.</param>
         /// <returns>A new component registration.</returns>
-        private static IComponentRegistration CreateRegistration(ITreeNode invocationExpression, IDeclaredType serviceType, IDeclaredType implementationType)
+        protected static IComponentRegistration CreateRegistration(ITreeNode invocationExpression, IDeclaredType serviceType, IDeclaredType implementationType)
         {
             if (serviceType == null || implementationType == null)
             {

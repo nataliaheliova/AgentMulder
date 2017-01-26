@@ -21,10 +21,10 @@ if (!(Test-Path "$env:LOCALAPPDATA\Microsoft\VisualStudio\14.0$hive"))
 	return;
 }
 
-$binSourcePath = "..\output\$config\$version\AgentMulder.*.dll";
-$pdbSourcePath = "..\output\$config\$version\AgentMulder.*.pdb";
-$containerBinSourcePath = "..\output\$config\$version\Containers\AgentMulder.*.dll";
-$containerPdbSourcePath = "..\output\$config\$version\Containers\AgentMulder.*.pdb";
+$binSourcePath = "..\output\$config\AgentMulder.*.dll";
+$pdbSourcePath = "..\output\$config\AgentMulder.*.pdb";
+$containerBinSourcePath = "..\output\$config\Containers\AgentMulder.*.dll";
+$containerPdbSourcePath = "..\output\$config\Containers\AgentMulder.*.pdb";
 
 # copy the main binaries and PDBs
 $targetDir = "$env:LOCALAPPDATA\JetBrains\plugins\ERNI.AgentMulder.$version\dotFiles";

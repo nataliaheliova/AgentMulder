@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\output\Debug\2016.3\Containers\</OutputPath>
+    <OutputPath>..\..\output\Debug\Containers\</OutputPath>
     <DefineConstants>TRACE;DEBUG;JET_MODE_ASSERT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -320,6 +320,7 @@
     <Compile Include="Patterns\AddMvc.cs" />
     <Compile Include="Patterns\AddScoped.cs" />
     <Compile Include="Patterns\AddSingleton.cs" />
+    <Compile Include="Patterns\AddDbContext.cs" />
     <Compile Include="Patterns\AddTransient.cs" />
     <Compile Include="AspNetCorePatternBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
