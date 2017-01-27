@@ -36,6 +36,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		devDeploy.ps1 = devDeploy.ps1
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgentMulder.Containers.AspNetCore", "AgentMulder.Containers.AspNetCore\AgentMulder.Containers.AspNetCore.csproj", "{5315800E-A7D4-4AD6-8090-965686B43BC6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +87,10 @@ Global
 		{DA36BB2B-643E-4206-B7AE-2F3ABA7225B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA36BB2B-643E-4206-B7AE-2F3ABA7225B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA36BB2B-643E-4206-B7AE-2F3ABA7225B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5315800E-A7D4-4AD6-8090-965686B43BC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5315800E-A7D4-4AD6-8090-965686B43BC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5315800E-A7D4-4AD6-8090-965686B43BC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5315800E-A7D4-4AD6-8090-965686B43BC6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -99,6 +105,7 @@ Global
 		{51D960FF-093C-4D5B-BEB9-C79999056909} = {3B332DD2-D5D8-4B58-8EA2-A64FBD08D0F7}
 		{4259A34A-6F2E-4B29-BDF6-AACA854009D4} = {3B332DD2-D5D8-4B58-8EA2-A64FBD08D0F7}
 		{DA36BB2B-643E-4206-B7AE-2F3ABA7225B3} = {3508BC1E-600A-434B-ADFE-D533B5C86ED9}
+		{5315800E-A7D4-4AD6-8090-965686B43BC6} = {3B332DD2-D5D8-4B58-8EA2-A64FBD08D0F7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35

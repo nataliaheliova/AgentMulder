@@ -44,6 +44,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <OutputPath>..\..\output\Release\2016.3\Containers\</OutputPath>
     <OutputPath>..\..\output\Release\Containers\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
