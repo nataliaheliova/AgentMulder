@@ -20,7 +20,7 @@ namespace AgentMulder.Containers.AspNetCore.Patterns
         private static readonly IStructuralSearchPattern pattern =
             new CSharpStructuralSearchPattern("$container$.AddDbContext($arguments$)",
             new ExpressionPlaceholder("container", "Microsoft.Extensions.DependencyInjection.IServiceCollection"),
-            new ArgumentPlaceholder("arguments", 1, 2));
+            new ArgumentPlaceholder("arguments", 0, 1));
 
         public AddDbContext() : base(pattern)
         {
