@@ -148,7 +148,7 @@ namespace AgentMulder.ReSharper.Plugin.Components
             {
                 if (HasDirtyFiles)
                 {
-                    foreach (var psiSourceFile in dirtyFiles)
+                    foreach (var psiSourceFile in dirtyFiles.ToList()) // ToList to prevent InvalidOperation while enumerating
                     {
                         ((ICache)this).Merge(psiSourceFile, ProcessSourceFile(psiSourceFile));
                     }

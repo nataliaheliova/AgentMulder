@@ -7,7 +7,7 @@ param ($version = $(throw "Version must be specified"), $waveVersion = $(throw "
 
 if ($waveVersion -notmatch "\d+\.\d+")
 {
-    Write-Output "The WaveVersion parameter has incorrect format. Must match '\d+\.\d+' (e.g. 7.1)";
+    Write-Output "The WaveVersion parameter has incorrect format. Must match '\d+\.\d+' (e.g. 8.0)";
     return;
 }
 

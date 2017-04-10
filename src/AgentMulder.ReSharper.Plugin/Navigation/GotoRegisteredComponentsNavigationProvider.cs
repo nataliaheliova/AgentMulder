@@ -69,13 +69,7 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
                 return null;
             }
 
-            var registeredTypes = typeCollector.GetRegisteredTypes().ToList();
-
-            if (!registeredTypes.Any())
-            {
-                // no registrations
-                return null;
-            }
+            var registeredTypes = typeCollector.GetRegisteredTypes();
 
             return () =>
             {
@@ -89,7 +83,7 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
 
                 navigationExecutionHost.ShowContextPopupMenu(dataContext, occurences,
                     DescriptorBuilder(solution, occurences),
-                    new OccurrencePresentationOptions(IconDisplayStyle.OccurrenceEntityType), true, ActionName);
+                    new OccurrencePresentationOptions(IconDisplayStyle.OccurrenceEntityType, containerStyle: ContainerDisplayStyle.Namespace), true, ActionName);
             };
         }
 
