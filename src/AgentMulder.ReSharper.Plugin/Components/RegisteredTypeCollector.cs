@@ -184,6 +184,11 @@ namespace AgentMulder.ReSharper.Plugin.Components
 
         void ICache.SyncUpdate(bool underTransaction)
         {
+            if (underTransaction)
+            {
+                return;
+            }
+
             lock (lockObject)
             {
                 if (HasDirtyFiles)

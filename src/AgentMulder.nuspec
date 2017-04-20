@@ -3,19 +3,20 @@
   <metadata>
     <id>ERNI.AgentMulder</id>
     <version>$version$</version>
-    <authors>ERNI Community</authors>
-    <owners>ERNI Community</owners>
+    <authors>Igal Tabachnik, ERNI Community</authors>
+    <owners>hmemcpy, esk-community</owners>
     <title>Agent Mulder plugin for ReSharper</title>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <licenseUrl>https://raw.githubusercontent.com/ERNICommunity/AgentMulder/master/License.txt</licenseUrl>
     <description>Provides navigation to and finding usages of types registered or resolved via Dependency Injection (DI) containers.</description>
     <projectUrl>https://github.com/ERNICommunity/AgentMulder</projectUrl>
-    <copyright>Copyright &#x00A9; 2012-2016 Igal Tabachnik</copyright>
+    <copyright>Copyright &#x00A9; 2012-2017 Igal Tabachnik, ERNI Community</copyright>
     <iconUrl>https://raw.githubusercontent.com/ERNICommunity/AgentMulder/master/logo.png</iconUrl>
     <releaseNotes>
 &#8226; Adding support for ReSharper 2017.1
+&#8226; Adding support for ASP.NET Core DI container
     </releaseNotes>
-    <tags>resharper agent mulder agentmulder ioc di windsor castle autofac ninject structuremap unity simpleinjector</tags>
+    <tags>resharper agent mulder agentmulder ioc di windsor castle autofac ninject structuremap unity simpleinjector aspnetcore</tags>
     <dependencies>
       <dependency id="Wave" version="$waveVersion$"/>
     </dependencies>
