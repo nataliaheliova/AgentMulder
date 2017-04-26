@@ -1,3 +1,7 @@
+// Patterns: 1
+// Matches: TestContext.cs
+// NotMatches: Baz.cs
+
 using Microsoft.Extensions.DependencyInjection;
 using TestApplication.Types;
 

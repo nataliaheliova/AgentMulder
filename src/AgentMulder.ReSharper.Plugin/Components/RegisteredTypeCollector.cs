@@ -42,7 +42,7 @@ namespace AgentMulder.ReSharper.Plugin.Components
         /// Gets all the currently registered types and the registrations that created them.
         /// </summary>
         /// <returns>A read-only collection of type declarations and registration information.</returns>
-        public IEnumerable<Tuple<ITypeDeclaration, RegistrationInfo>> GetRegisteredTypes()
+        public IEnumerable<Tuple<ITypeDeclaration, RegistrationInfo>>  GetRegisteredTypes()
         {
             ((ICache)this).SyncUpdate(false);
 
@@ -52,9 +52,9 @@ namespace AgentMulder.ReSharper.Plugin.Components
             // types matching a registration are returned
             lock (lockObject)
             {
-                var registrations = patternManager.GetAllRegistrations().ToList();
+                var registrations = patternManager.GetAllRegistrations();
 
-                if (registrations.Count == 0)
+                if (!registrations.Any())
                 {
                     yield break;
                 }
@@ -184,11 +184,16 @@ namespace AgentMulder.ReSharper.Plugin.Components
 
         void ICache.SyncUpdate(bool underTransaction)
         {
+            if (underTransaction)
+            {
+                return;
+            }
+
             lock (lockObject)
             {
                 if (HasDirtyFiles)
                 {
-                    foreach (var psiSourceFile in dirtyFiles)
+                    foreach (var psiSourceFile in dirtyFiles.ToList()) // ToList to prevent InvalidOperation while enumerating
                     {
                         ((ICache)this).Merge(psiSourceFile, CollectTypes(psiSourceFile));
                     }
