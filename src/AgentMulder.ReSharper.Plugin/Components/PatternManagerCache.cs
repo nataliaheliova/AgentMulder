@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using JetBrains.Application.Progress;
@@ -43,7 +44,9 @@ namespace AgentMulder.ReSharper.Plugin.Components
 
         object ICache.Build(IPsiSourceFile sourceFile, bool isStartup)
         {
-            return ProcessSourceFile(sourceFile).ToList();
+            var registrationInfos = ProcessSourceFile(sourceFile).ToList();
+            Merge(sourceFile, registrationInfos);
+            return registrationInfos;
         }
 
         private IEnumerable<RegistrationInfo> ProcessSourceFile(IPsiSourceFile sourceFile)
@@ -60,6 +63,7 @@ namespace AgentMulder.ReSharper.Plugin.Components
 
         void ICache.Save(IProgressIndicator progress, bool enablePersistence)
         {
+            Save?.Invoke(this, EventArgs.Empty);
         }
 
         void ICache.MarkAsDirty(IPsiSourceFile sourceFile)
@@ -199,5 +203,7 @@ namespace AgentMulder.ReSharper.Plugin.Components
                 return registrationsMap.Values;
             }
         }
+
+        public event EventHandler Save;
     }
 }

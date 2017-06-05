@@ -27,13 +27,14 @@ namespace AgentMulder.ReSharper.Plugin.Components
         private readonly PsiProjectFileTypeCoordinator projectFileTypeCoordinator;
         private readonly IPatternManager patternManager;
 
-        private readonly OneToListMap<IPsiSourceFile, ITypeDeclaration> matchingTypes =
-            new OneToListMap<IPsiSourceFile, ITypeDeclaration>();
+        private readonly OneToListMap<IPsiSourceFile, MatchingType> matchingTypes =
+            new OneToListMap<IPsiSourceFile, MatchingType>();
 
         public RegisteredTypeCollector(PsiProjectFileTypeCoordinator projectFileTypeCoordinator, IPatternManager patternManager)
         {
             this.projectFileTypeCoordinator = projectFileTypeCoordinator;
             this.patternManager = patternManager;
+            this.patternManager.Save += (sender, args) => Refresh();
         }
 
         public bool HasDirtyFiles => dirtyFiles.Any();
@@ -52,29 +53,22 @@ namespace AgentMulder.ReSharper.Plugin.Components
             // types matching a registration are returned
             lock (lockObject)
             {
-                var registrations = patternManager.GetAllRegistrations();
+                var types = matchingTypes.Values.Select(
+                    _ => new Tuple<ITypeDeclaration, RegistrationInfo>(_.TypeDeclaration, _.MatchingRegistration));
 
-                if (!registrations.Any())
-                {
-                    yield break;
-                }
-
-                foreach (var type in matchingTypes.Values)
-                {
-                    var registration = registrations.FirstOrDefault(_ => _.Registration.IsSatisfiedBy(type.DeclaredElement));
-
-                    if (registration != null)
-                    {
-                        yield return new Tuple<ITypeDeclaration, RegistrationInfo>(type, registration);
-                    }
-                }
+                return types;
             }
         }
-
+        
         object ICache.Build(IPsiSourceFile sourceFile, bool isStartup)
         {
-            // collect types from file
-            return CollectTypes(sourceFile).ToList();
+            // this will store only keys, no action is performed on the files
+            // this is because to collect registered types, we first need the pattern manager cache to be completely populated
+            // that will only happen later - see Refresh()
+            var list = new List<MatchingType>();
+            ((ICache)this).Merge(sourceFile, list);
+
+            return list;
         }
 
         void ICache.MarkAsDirty(IPsiSourceFile sf)
@@ -137,7 +131,7 @@ namespace AgentMulder.ReSharper.Plugin.Components
             lock (lockObject)
             {
                 matchingTypes.RemoveKey(sourceFile);
-                matchingTypes.AddValueRange(sourceFile, (IEnumerable<ITypeDeclaration>)data);
+                matchingTypes.AddValueRange(sourceFile, (IEnumerable<MatchingType>)data);
 
                 dirtyFiles.Remove(sourceFile);
             }
@@ -189,6 +183,11 @@ namespace AgentMulder.ReSharper.Plugin.Components
                 return;
             }
 
+            if (!patternManager.GetAllRegistrations().Any())
+            {
+                return;
+            }
+
             lock (lockObject)
             {
                 if (HasDirtyFiles)
@@ -208,7 +207,7 @@ namespace AgentMulder.ReSharper.Plugin.Components
             // this is just a debugging facility
         }
 
-        private IEnumerable<ITypeDeclaration> CollectTypes(IPsiSourceFile sourceFile)
+        private List<MatchingType> CollectTypes(IPsiSourceFile sourceFile)
         {
             // initializes the collection visitor and runs it agains the specified file
             var visitor = new RegisteredTypeCollectorVisitor(patternManager.GetAllRegistrations().ToList());
@@ -221,6 +220,18 @@ namespace AgentMulder.ReSharper.Plugin.Components
         }
 
         /// <summary>
+        /// Recomputes the collected types from scratch.
+        /// </summary>
+        private void Refresh()
+        {
+            foreach (var file in matchingTypes.Keys.ToList())
+            {
+                var list = CollectTypes(file);
+                ((ICache)this).Merge(file, list);
+            }
+        }
+
+        /// <summary>
         /// The visitor for collecting registered types.
         /// </summary>
         private class RegisteredTypeCollectorVisitor : SearchDomainVisitor
@@ -229,7 +240,7 @@ namespace AgentMulder.ReSharper.Plugin.Components
 
             public override bool ProcessingIsFinished { get; } = false;
 
-            public List<ITypeDeclaration> MatchingTypes { get; } = new List<ITypeDeclaration>();
+            public List<MatchingType> MatchingTypes { get; } = new List<MatchingType>();
 
             public RegisteredTypeCollectorVisitor(IList<RegistrationInfo> registrations)
             {
@@ -250,9 +261,24 @@ namespace AgentMulder.ReSharper.Plugin.Components
                 }
                 else
                 {
-                    // this element is a class declaration
-                    // we store it for later
-                    MatchingTypes.Add(typeDeclaration);
+                    var matchingRegistration =
+                        registrations.FirstOrDefault(
+                            _ => _.Registration.IsSatisfiedBy(typeDeclaration.DeclaredElement));
+
+                    if (matchingRegistration != null)
+                    {
+                        // this element is a class declaration
+                        // we store it for later
+                        MatchingTypes.Add(new MatchingType(typeDeclaration, matchingRegistration));
+                    }
+                    else
+                    {
+                        // this element is not a class declaration - call recursively on children
+                        foreach (var treeNode in element.Children())
+                        {
+                            VisitElement(treeNode);
+                        }
+                    }
                 }
             }
 
@@ -264,6 +290,19 @@ namespace AgentMulder.ReSharper.Plugin.Components
                     VisitElement(psiFile);
                 }
             }
+        }
+
+        private sealed class MatchingType
+        {
+            public MatchingType(ITypeDeclaration typeDeclaration, RegistrationInfo registration)
+            {
+                TypeDeclaration = typeDeclaration;
+                MatchingRegistration = registration;
+            }
+
+            public ITypeDeclaration TypeDeclaration { get; }
+
+            public RegistrationInfo MatchingRegistration { get; }
         }
     }
 }

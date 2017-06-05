@@ -69,25 +69,11 @@ namespace AgentMulder.ReSharper.Plugin.Navigation
                 yield break;
             }
 
-            var allRegistrations = patternManager.GetAllRegistrations().ToList();
-
-            if (allRegistrations.Count == 0)
-            {
-                // no registrations
-                yield break;
-            }
-
             var registeredTypes = typeCollector.GetRegisteredTypes().ToList();
 
             if (!registeredTypes.Any())
             {
                 // no registrations
-                yield break;
-            }
-
-            if (!registeredTypes.Any(_ => _.Item2.Registration.IsSatisfiedBy(constructedType.DeclaredElement)))
-            {
-                // type is not registered for DI, therefore it will not have its dependencies injected
                 yield break;
             }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using JetBrains.ReSharper.Psi;
 
 namespace AgentMulder.ReSharper.Plugin.Components
@@ -7,5 +8,7 @@ namespace AgentMulder.ReSharper.Plugin.Components
     {
         IEnumerable<RegistrationInfo> GetRegistrationsForFile(IPsiSourceFile sourceFile);
         IEnumerable<RegistrationInfo> GetAllRegistrations();
+
+        event EventHandler Save;
     }
 }
