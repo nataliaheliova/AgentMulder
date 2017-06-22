@@ -21,8 +21,6 @@ namespace AgentMulder.ReSharper.Plugin.Components
             this.collectUsagesStageProcess = collectUsagesStageProcess;
         }
 
-
-
         public void MarkTypeAsUsed(ITypeDeclaration declaration)
         {
             ITypeElement element = declaration.DeclaredElement;

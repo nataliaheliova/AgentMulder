@@ -77,6 +77,7 @@ namespace AgentMulder.ReSharper.Plugin.Components
                    let matchResults = patternSearcher.Search(pattern, searchDomain)
                    from matchResult in matchResults.Where(result => result.Matched)
                    from registration in pattern.GetComponentRegistrations(matchResult.MatchedElement)
+                   where registration != null
                    select new RegistrationInfo(registration, containerInfo.ContainerDisplayName);
         }
     }

@@ -48,11 +48,16 @@ namespace AgentMulder.ReSharper.Plugin.Components
 
         private void DoSearch(IStructuralPatternHolder pattern, IFindResultConsumer<IStructuralMatchResult> consumer, ISearchDomain searchDomain)
         {
-            var searcher = new StructuralSearcher(documentManager, pattern.Language, pattern.Matcher);
-            var searchDomainSearcher = new StructuralSearchDomainSearcher<IStructuralMatchResult>(
-                searchDomain, searcher, consumer, NullProgressIndicator.Instance, true);
-
-            searchDomainSearcher.Run();
+            try
+            {
+                var searcher = new StructuralSearcher(documentManager, pattern.Language, pattern.Matcher);
+                var searchDomainSearcher = new StructuralSearchDomainSearcher<IStructuralMatchResult>(
+                    searchDomain, searcher, consumer, NullProgressIndicator.Instance, true);
+                searchDomainSearcher.Run();
+            }
+            catch (ProcessCancelledException)
+            {
+            }
         }
     }
 }
