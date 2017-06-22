@@ -11,7 +11,11 @@ using JetBrains.ReSharper.Psi.Search;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.Util;
 using System.Linq;
+using EnvDTE80;
 using JetBrains.ReSharper.Psi.VB.Util;
+using JetBrains.ReSharper.Resources.Shell;
+using JetBrains.VsIntegration.Shell;
+using Microsoft.Build.Framework;
 
 namespace AgentMulder.ReSharper.Plugin.Components
 {
@@ -222,7 +226,7 @@ namespace AgentMulder.ReSharper.Plugin.Components
         /// <summary>
         /// Recomputes the collected types from scratch.
         /// </summary>
-        private void Refresh()
+        public void Refresh()
         {
             foreach (var file in matchingTypes.Keys.ToList())
             {

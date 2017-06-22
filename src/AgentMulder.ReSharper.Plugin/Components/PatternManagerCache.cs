@@ -42,6 +42,15 @@ namespace AgentMulder.ReSharper.Plugin.Components
             }
         }
 
+        public void Refresh()
+        {
+            foreach (var file in this.registrationsMap.Keys.ToList())
+            {
+                var list = this.ProcessSourceFile(file).ToList();
+                ((ICache)this).Merge(file, list);
+            }
+        }
+
         object ICache.Build(IPsiSourceFile sourceFile, bool isStartup)
         {
             var registrationInfos = ProcessSourceFile(sourceFile).ToList();

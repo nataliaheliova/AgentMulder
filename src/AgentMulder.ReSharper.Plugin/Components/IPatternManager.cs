@@ -8,6 +8,7 @@ namespace AgentMulder.ReSharper.Plugin.Components
     {
         IEnumerable<RegistrationInfo> GetRegistrationsForFile(IPsiSourceFile sourceFile);
         IEnumerable<RegistrationInfo> GetAllRegistrations();
+        void Refresh();
 
         event EventHandler Save;
     }

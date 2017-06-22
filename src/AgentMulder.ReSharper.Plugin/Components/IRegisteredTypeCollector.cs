@@ -14,5 +14,7 @@ namespace AgentMulder.ReSharper.Plugin.Components
         /// </summary>
         /// <returns>A read-only collection of type declarations and registration information.</returns>
         IEnumerable<Tuple<ITypeDeclaration, RegistrationInfo>> GetRegisteredTypes();
+
+        void Refresh();
     }
 }
