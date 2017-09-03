@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using JetBrains.Ide.SolutionBuilders.Prototype.Services.Execution.Stubs;
+using JetBrains.IDE.SolutionBuilders.Prototype.Services.Execution.Stubs;
 using JetBrains.ProjectModel;
 
 namespace AgentMulder.ReSharper.Plugin.Components
