@@ -5,6 +5,7 @@ using AgentMulder.ReSharper.Plugin.Components;
 using JetBrains.Annotations;
 using JetBrains.Application.DataContext;
 using JetBrains.Application.Progress;
+using JetBrains.Application.UI.TreeModels;
 using JetBrains.DocumentModel.DataContext;
 using JetBrains.IDE.TreeBrowser;
 using JetBrains.ProjectModel;
@@ -16,7 +17,6 @@ using JetBrains.ReSharper.Feature.Services.Tree;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.Resources.Shell;
-using JetBrains.TreeModels;
 
 namespace AgentMulder.ReSharper.Plugin.Navigation
 {
