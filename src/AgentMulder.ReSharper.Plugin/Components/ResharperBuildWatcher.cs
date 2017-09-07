@@ -4,7 +4,7 @@ using JetBrains.ProjectModel;
 
 namespace AgentMulder.ReSharper.Plugin.Components
 {
-    [SolutionComponent]
+    //[SolutionComponent]
     public sealed class ResharperBuildWatcher : BuildRunWrapperStub
     {
         private readonly ISolution solution;
