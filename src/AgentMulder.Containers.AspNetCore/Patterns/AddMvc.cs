@@ -14,8 +14,9 @@ namespace AgentMulder.Containers.AspNetCore.Patterns
     internal sealed class AddMvc : RegistrationPatternBase
     {
         private static readonly IStructuralSearchPattern pattern =
-            new CSharpStructuralSearchPattern("$container$.AddMvc()",
-                new ExpressionPlaceholder("container", "Microsoft.Extensions.DependencyInjection.IServiceCollection"));
+            new CSharpStructuralSearchPattern("$container$.AddMvc($arguments$)",
+                new ExpressionPlaceholder("container", "Microsoft.Extensions.DependencyInjection.IServiceCollection"),
+                new ArgumentPlaceholder("arguments", 0, 1));
 
         public AddMvc() : base(pattern)
         {
