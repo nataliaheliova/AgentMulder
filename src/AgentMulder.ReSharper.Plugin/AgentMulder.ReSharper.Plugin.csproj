@@ -384,7 +384,7 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>powershell -ExecutionPolicy Bypass -file "$(SolutionDir)devDeploy.ps1" -config $(ConfigurationName) -version 2017.2 -hive AgentMulder</PostBuildEvent>
+    <PostBuildEvent>powershell -ExecutionPolicy Bypass -file "$(SolutionDir)devDeploy.ps1" -config $(ConfigurationName) -version 2017.2.1 -hive AgentMulder</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\Antlr2.Tools.2.7.6.4\build\Antlr2.Tools.targets" Condition="Exists('..\packages\Antlr2.Tools.2.7.6.4\build\Antlr2.Tools.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
