@@ -188,13 +188,14 @@ namespace AgentMulder.ReSharper.Plugin.Components
                 return;
             }
 
-            if (!patternManager.GetAllRegistrations().Any())
-            {
-                return;
-            }
-
             lock (lockObject)
             {
+                if (!patternManager.GetAllRegistrations().Any())
+                {
+                    dirtyFiles.Clear();
+                    return;
+                }
+            
                 if (HasDirtyFiles)
                 {
                     foreach (var psiSourceFile in dirtyFiles.ToList()) // ToList to prevent InvalidOperation while enumerating
