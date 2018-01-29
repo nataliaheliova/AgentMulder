@@ -14,7 +14,7 @@ namespace AgentMulder.ReSharper.Domain.Patterns
     public abstract class RegistrationPatternBase : IRegistrationPattern
     {
         private readonly IStructuralSearchPattern pattern;
-        private readonly Lazy<IStructuralMatcher> matcher;
+        private readonly IStructuralMatcher matcher;
 
         IStructuralSearchPattern IStructuralPatternHolder.Pattern
         {
@@ -23,7 +23,7 @@ namespace AgentMulder.ReSharper.Domain.Patterns
 
         IStructuralMatcher IStructuralPatternHolder.Matcher
         {
-            get { return matcher.Value; }
+            get { return matcher; }
         }
 
         public PsiLanguageType Language
@@ -35,7 +35,7 @@ namespace AgentMulder.ReSharper.Domain.Patterns
         {
             this.pattern = pattern;
 
-            matcher = new Lazy<IStructuralMatcher>(this.pattern.CreateMatcher);
+            matcher = this.pattern.CreateMatcher();
         }
 
         private IInvocationExpression GetMatchedExpression(ITreeNode element)
@@ -51,7 +51,7 @@ namespace AgentMulder.ReSharper.Domain.Patterns
                 return EmptyList<IInvocationExpression>.InstanceList;
             }
 
-            return invocationExpression.GetAllExpressions().Where(expression => matcher.Value.QuickMatch(expression));
+            return invocationExpression.GetAllExpressions().Where(expression => matcher.QuickMatch(expression));
         }
 
         protected IStructuralMatchResult Match(ITreeNode treeNode)
@@ -59,15 +59,15 @@ namespace AgentMulder.ReSharper.Domain.Patterns
             IInvocationExpression expression = GetMatchedExpression(treeNode);
             if (expression == null)
             {
-                return matcher.Value.Match(treeNode);
+                return matcher.Match(treeNode);
             }
 
-            return matcher.Value.Match(expression);
+            return matcher.Match(expression);
         }
 
         protected IEnumerable<IStructuralMatchResult> MatchMany(ITreeNode treeNode)
         {
-            return GetAllMatchedExpressions(treeNode).Select(expression => matcher.Value.Match(expression));
+            return GetAllMatchedExpressions(treeNode).Select(expression => matcher.Match(expression));
         }
 
         public abstract IEnumerable<IComponentRegistration> GetComponentRegistrations(ITreeNode registrationRootElement);

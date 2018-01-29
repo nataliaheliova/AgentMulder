@@ -8,7 +8,7 @@ namespace AgentMulder.ReSharper.Plugin.Components
     public sealed class VsBuildWatcher
     {
         private readonly ISolution solution;
-        BuildEvents events;
+        private BuildEvents events;
 
         public VsBuildWatcher(DTE dte, ISolution solution)
         {

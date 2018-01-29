@@ -11,11 +11,7 @@ using JetBrains.ReSharper.Psi.Search;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.Util;
 using System.Linq;
-using EnvDTE80;
 using JetBrains.ReSharper.Psi.VB.Util;
-using JetBrains.ReSharper.Resources.Shell;
-using JetBrains.VsIntegration.Shell;
-using Microsoft.Build.Framework;
 
 namespace AgentMulder.ReSharper.Plugin.Components
 {
@@ -66,6 +62,11 @@ namespace AgentMulder.ReSharper.Plugin.Components
         
         object ICache.Build(IPsiSourceFile sourceFile, bool isStartup)
         {
+            if (sourceFile.Properties.IsGeneratedFile || sourceFile.Properties.IsNonUserFile)
+            {
+                return null;
+            }
+
             // this will store only keys, no action is performed on the files
             // this is because to collect registered types, we first need the pattern manager cache to be completely populated
             // that will only happen later - see Refresh()
