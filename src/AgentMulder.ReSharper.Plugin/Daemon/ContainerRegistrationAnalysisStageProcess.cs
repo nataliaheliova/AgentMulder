@@ -27,14 +27,23 @@ namespace AgentMulder.ReSharper.Plugin.Daemon
 
         public void Execute(Action<DaemonStageResult> commiter)
         {
-            var consumer = new DefaultHighlightingConsumer(this, settingsStore);
-
-            foreach (IFile psiFile in EnumeratePsiFiles())
+            var highlights = new List<HighlightingInfo>();
+            foreach (var psiFile in EnumeratePsiFiles())
             {
+                var psiSourceFile = psiFile.GetSourceFile();
+
+                if (psiSourceFile == null)
+                {
+                    continue;
+                }
+
+                var consumer = new DefaultHighlightingConsumer(psiSourceFile);
                 ProcessFile(psiFile, consumer);
+                
+                highlights.AddRange(consumer.Highlightings);
             }
 
-            commiter(new DaemonStageResult(consumer.Highlightings));
+            commiter(new DaemonStageResult(highlights));
         }
 
         private void ProcessFile(IFile psiFile, DefaultHighlightingConsumer consumer)

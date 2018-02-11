@@ -35,6 +35,9 @@ Copy-Item $pdbSourcePath $targetDir;
 $targetDir = "$env:LOCALAPPDATA\JetBrains\plugins\ERNI.AgentMulder.$version\dotFiles\Containers";
 New-Item $targetDir -type directory -force | Out-Null
 
+Copy-Item $containerBinSourcePath $targetDir;
+Copy-Item $containerPdbSourcePath $targetDir;
+
 # copy the main binaries and PDBs
 $targetDir = "$env:LOCALAPPDATA\JetBrains\Installations\ReSharperPlatformVs15_52483313AgentMulder";
 Copy-Item $binSourcePath $targetDir;
