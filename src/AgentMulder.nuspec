@@ -10,15 +10,14 @@
     <licenseUrl>https://raw.githubusercontent.com/ERNICommunity/AgentMulder/master/License.txt</licenseUrl>
     <description>Provides navigation to and finding usages of types registered or resolved via Dependency Injection (DI) containers.</description>
     <projectUrl>https://github.com/ERNICommunity/AgentMulder</projectUrl>
-    <copyright>Copyright &#x00A9; 2012-2017 Igal Tabachnik, ERNI Community</copyright>
+    <copyright>Copyright &#x00A9; 2012-2018 Igal Tabachnik, ERNI Community</copyright>
     <iconUrl>https://raw.githubusercontent.com/ERNICommunity/AgentMulder/master/logo.png</iconUrl>
     <releaseNotes>
-&#8226; Improve registration scanning reliability
-&#8226; Add support for ASP.NET Core's AddMvc() with arguments
+&#8226; Fixed several issues causing inconsistent scanning behavior
   </releaseNotes>
     <tags>resharper agent mulder agentmulder ioc di windsor castle autofac ninject structuremap unity simpleinjector aspnetcore</tags>
     <dependencies>
-      <dependency id="Wave" version="$waveVersion$"/>
+      <dependency id="Wave" version="[$waveVersionLow$,$waveVersionHigh$)"/>
     </dependencies>
   </metadata>
   <files>
