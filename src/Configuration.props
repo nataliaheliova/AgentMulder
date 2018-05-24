@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <IsPackable>False</IsPackable>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 
     <Description>AgentMulder plugin for ReSharper</Description> 
 
