@@ -1,4 +1,4 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -32,8 +32,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		AgentMulder.nuspec = AgentMulder.nuspec
 		buildNuget.ps1 = buildNuget.ps1
-		CommonAssemblyInfo.cs = CommonAssemblyInfo.cs
 		devDeploy.ps1 = devDeploy.ps1
+		Configuration.props = Configuration.props
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgentMulder.Containers.AspNetCore", "AgentMulder.Containers.AspNetCore\AgentMulder.Containers.AspNetCore.csproj", "{5315800E-A7D4-4AD6-8090-965686B43BC6}"
