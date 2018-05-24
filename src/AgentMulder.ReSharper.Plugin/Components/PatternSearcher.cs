@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using AgentMulder.ReSharper.Domain.Patterns;
 using JetBrains.Application.Progress;
@@ -55,7 +56,7 @@ namespace AgentMulder.ReSharper.Plugin.Components
                     searchDomain, searcher, consumer, NullProgressIndicator.Instance, true);
                 searchDomainSearcher.Run();
             }
-            catch (ProcessCancelledException)
+            catch (OperationCanceledException)
             {
             }
         }
