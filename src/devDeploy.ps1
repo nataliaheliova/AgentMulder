@@ -14,7 +14,7 @@ Push-Location $dir;
 [Environment]::CurrentDirectory = $PWD;
 
 #check if VS 2017 experimental hive exists
-if (!(Test-Path "$env:LOCALAPPDATA\Microsoft\VisualStudio\15.0_52483313$hive"))
+if (!(Test-Path "$env:LOCALAPPDATA\Microsoft\VisualStudio\15.0_b81611f4$hive"))
 {
 	echo "Visual Studio experimental hive $hive does not exist.";
 	echo "EXTENSION NOT INSTALLED";
@@ -39,12 +39,12 @@ Copy-Item $containerBinSourcePath $targetDir;
 Copy-Item $containerPdbSourcePath $targetDir;
 
 # copy the main binaries and PDBs
-$targetDir = "$env:LOCALAPPDATA\JetBrains\Installations\ReSharperPlatformVs15_52483313AgentMulder";
+$targetDir = "$env:LOCALAPPDATA\JetBrains\Installations\ReSharperPlatformVs15_b81611f4AgentMulder_000";
 Copy-Item $binSourcePath $targetDir;
 Copy-Item $pdbSourcePath $targetDir;
 
 # copy container-specific binaries and PDBs
-$targetDir = "$env:LOCALAPPDATA\JetBrains\Installations\ReSharperPlatformVs15_52483313AgentMulder\Containers";
+$targetDir = "$env:LOCALAPPDATA\JetBrains\Installations\ReSharperPlatformVs15_b81611f4AgentMulder_000\Containers";
 New-Item $targetDir -type directory -force | Out-Null
 
 Copy-Item $containerBinSourcePath $targetDir;
