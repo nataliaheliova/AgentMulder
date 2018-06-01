@@ -30,8 +30,8 @@
   <Import Project="..\packages\JetBrains.Platform.Interop.dotMemoryUnit.Framework.112.0.20180530.113714\build\net45\JetBrains.Platform.Interop.dotMemoryUnit.Framework.props" Condition="Exists('..\packages\JetBrains.Platform.Interop.dotMemoryUnit.Framework.112.0.20180530.113714\build\net45\JetBrains.Platform.Interop.dotMemoryUnit.Framework.props')" />
   <Import Project="..\packages\JetBrains.Build.Platform.Tasks.ProxyToSolutionCompiledTask.2.0.20170904.2\build\JetBrains.Build.Platform.Tasks.ProxyToSolutionCompiledTask.Props" Condition="Exists('..\packages\JetBrains.Build.Platform.Tasks.ProxyToSolutionCompiledTask.2.0.20170904.2\build\JetBrains.Build.Platform.Tasks.ProxyToSolutionCompiledTask.Props')" />
   <PropertyGroup>
-    <ReSharperSdkVersion>2016.3</ReSharperSdkVersion>
     <HostFullIdentifier>ReSharperPlatformVs14ReSharper</HostFullIdentifier>
+    <ReSharperSdkVersion>2018.1</ReSharperSdkVersion>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
@@ -419,7 +419,7 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>powershell -ExecutionPolicy Bypass -file "$(SolutionDir)devDeploy.ps1" -config $(ConfigurationName) -version 2017.3.1 -hive AgentMulder</PostBuildEvent>
+    <PostBuildEvent>powershell -ExecutionPolicy Bypass -file "$(SolutionDir)devDeploy.ps1" -config $(ConfigurationName) -version 2018.1.2 -hive AgentMulder</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\Antlr2.Tools.2.7.6.4\build\Antlr2.Tools.targets" Condition="Exists('..\packages\Antlr2.Tools.2.7.6.4\build\Antlr2.Tools.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
