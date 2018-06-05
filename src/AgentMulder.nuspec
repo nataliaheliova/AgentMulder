@@ -21,7 +21,9 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="..\output\$config$\**\AgentMulder.*.dll" target="dotFiles\" />
-    <file src="..\output\$config$\**\AgentMulder.*.pdb" target="dotFiles\" />    
+    <file src="..\output\$config$\AgentMulder.*.dll" target="dotFiles\" />
+    <file src="..\output\$config$\AgentMulder.*.pdb" target="dotFiles\" />    
+    <file src="..\output\$config$\Containers\AgentMulder.Containers.*.dll" target="dotFiles\Containers" />
+    <file src="..\output\$config$\Containers\AgentMulder.Containers.*.pdb" target="dotFiles\Containers" />  
   </files>
 </package>

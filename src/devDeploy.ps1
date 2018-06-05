@@ -23,8 +23,8 @@ if (!(Test-Path "$env:LOCALAPPDATA\Microsoft\VisualStudio\15.0_52483313$hive"))
 
 $binSourcePath = "..\output\$config\AgentMulder.*.dll";
 $pdbSourcePath = "..\output\$config\AgentMulder.*.pdb";
-$containerBinSourcePath = "..\output\$config\Containers\AgentMulder.*.dll";
-$containerPdbSourcePath = "..\output\$config\Containers\AgentMulder.*.pdb";
+$containerBinSourcePath = "..\output\$config\Containers\AgentMulder.Containers.*.dll";
+$containerPdbSourcePath = "..\output\$config\Containers\AgentMulder.Containers.*.pdb";
 
 # copy the main binaries and PDBs
 $targetDir = "$env:LOCALAPPDATA\JetBrains\plugins\ERNI.AgentMulder.$version\dotFiles";
@@ -39,12 +39,12 @@ Copy-Item $containerBinSourcePath $targetDir;
 Copy-Item $containerPdbSourcePath $targetDir;
 
 # copy the main binaries and PDBs
-$targetDir = "$env:LOCALAPPDATA\JetBrains\Installations\ReSharperPlatformVs15_52483313AgentMulder";
+$targetDir = "$env:LOCALAPPDATA\JetBrains\Installations\ReSharperPlatformVs15_28db6502AgentMulder_001";
 Copy-Item $binSourcePath $targetDir;
 Copy-Item $pdbSourcePath $targetDir;
 
 # copy container-specific binaries and PDBs
-$targetDir = "$env:LOCALAPPDATA\JetBrains\Installations\ReSharperPlatformVs15_52483313AgentMulder\Containers";
+$targetDir = "$env:LOCALAPPDATA\JetBrains\Installations\ReSharperPlatformVs15_28db6502AgentMulder_001\Containers";
 New-Item $targetDir -type directory -force | Out-Null
 
 Copy-Item $containerBinSourcePath $targetDir;
