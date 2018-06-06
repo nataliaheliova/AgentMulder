@@ -4,11 +4,7 @@
     <TargetFramework>net45</TargetFramework>
   </PropertyGroup>
   <Import Project="..\Configuration.props" />
-  <ItemGroup>
-    <PackageReference Include="EnvDTE80" Version="8.0.3" />
-    <PackageReference Include="JetBrains.ReSharper.SDK" Version="2018.1.*" />
-    <ProjectReference Include="..\AgentMulder.ReSharper.Domain\AgentMulder.ReSharper.Domain.csproj" />
-  </ItemGroup>
+  <Import Project="..\Main.props" />
   <ItemGroup>
     <Compile Remove="Navigation\IRegisteredComponentsContextSearch.cs" />
     <Compile Remove="Navigation\RegisteredComponentsContextSearch.cs" />
@@ -17,7 +13,13 @@
     <Compile Remove="Navigation\RegisteredComponentsSearchRequest.cs" />
     <Compile Remove="Navigation\SearchRegisteredComponentsDescriptor.cs" />
   </ItemGroup>
-  <PropertyGroup>
-    <PostBuildEvent>powershell -ExecutionPolicy Bypass -file "$(SolutionDir)devDeploy.ps1" -config $(ConfigurationName) -version 2017.3.1 -hive AgentMulder</PostBuildEvent>
-  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="EnvDTE80" Version="8.0.3" />
+    <PackageReference Include="JetBrains.ReSharper.SDK" Version="2018.1.*" />
+    <ProjectReference Include="..\AgentMulder.ReSharper.Domain\AgentMulder.ReSharper.Domain.csproj" />
+  </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="powershell -ExecutionPolicy Bypass -file &quot;$(SolutionDir)devDeploy.ps1&quot; -config $(ConfigurationName) -version 2018.1.0 -hive AgentMulder" />
+  </Target>
+  
 </Project>

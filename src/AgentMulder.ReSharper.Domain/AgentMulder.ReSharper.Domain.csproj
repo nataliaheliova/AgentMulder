@@ -4,6 +4,7 @@
     <TargetFramework>net45</TargetFramework>
   </PropertyGroup>
   <Import Project="..\Configuration.props" />
+  <Import Project="..\Main.props" />
   <ItemGroup>
     <PackageReference Include="JetBrains.ReSharper.SDK" Version="2018.1.*" />
   </ItemGroup>
