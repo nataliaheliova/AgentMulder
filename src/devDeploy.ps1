@@ -14,7 +14,7 @@ Push-Location $dir;
 [Environment]::CurrentDirectory = $PWD;
 
 #check if VS 2017 experimental hive exists
-if (!(Test-Path "$env:LOCALAPPDATA\Microsoft\VisualStudio\15.0_52483313$hive"))
+if (!(Test-Path "$env:LOCALAPPDATA\Microsoft\VisualStudio\15.0_*$hive"))
 {
 	echo "Visual Studio experimental hive $hive does not exist.";
 	echo "EXTENSION NOT INSTALLED";
@@ -38,17 +38,27 @@ New-Item $targetDir -type directory -force | Out-Null
 Copy-Item $containerBinSourcePath $targetDir;
 Copy-Item $containerPdbSourcePath $targetDir;
 
-# copy the main binaries and PDBs
-$targetDir = "$env:LOCALAPPDATA\JetBrains\Installations\ReSharperPlatformVs15_28db6502AgentMulder_001";
-Copy-Item $binSourcePath $targetDir;
-Copy-Item $pdbSourcePath $targetDir;
+$installationsRoot = "$env:LOCALAPPDATA\JetBrains\Installations";
 
-# copy container-specific binaries and PDBs
-$targetDir = "$env:LOCALAPPDATA\JetBrains\Installations\ReSharperPlatformVs15_28db6502AgentMulder_001\Containers";
-New-Item $targetDir -type directory -force | Out-Null
+# target installation directories - we copy to all copies for he specified hive (there may be more than one)
+$installations = Get-ChildItem -Directory -Filter ("ReSharperPlatformVs15_*$hive" + "_*") -Path $installationsRoot
 
-Copy-Item $containerBinSourcePath $targetDir;
-Copy-Item $containerPdbSourcePath $targetDir;
+foreach ($dir in $installations) {
+	$targetDir = "$installationsRoot\$dir"
+
+	echo "Copying files to $targetDir"
+
+	# copy the main binaries and PDBs
+	Copy-Item $binSourcePath $targetDir;
+	Copy-Item $pdbSourcePath $targetDir;
+
+	# copy container-specific binaries and PDBs
+	$targetDir = "$targetDir\Containers";
+	New-Item $targetDir -type directory -force | Out-Null
+
+	Copy-Item $containerBinSourcePath $targetDir;
+	Copy-Item $containerPdbSourcePath $targetDir;
+}
 
 # done
 echo "AgentMulder $version ($config) copied to hive $hive";
