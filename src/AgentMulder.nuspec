@@ -13,7 +13,7 @@
     <copyright>Copyright &#x00A9; 2012-2018 Igal Tabachnik, ERNI Community</copyright>
     <iconUrl>https://raw.githubusercontent.com/ERNICommunity/AgentMulder/master/logo.png</iconUrl>
     <releaseNotes>
-&#8226; Fixed several issues causing inconsistent scanning behavior
+&#8226; Compatibility with ReSharper 2018.1.x
   </releaseNotes>
     <tags>resharper agent mulder agentmulder ioc di windsor castle autofac ninject structuremap unity simpleinjector aspnetcore</tags>
     <dependencies>
