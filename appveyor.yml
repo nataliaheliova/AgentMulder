@@ -1,4 +1,5 @@
 version: 2018.1.0.{build}
+skip_branch_with_pr: true
 image: Visual Studio 2017
 configuration: Release
 environment:
@@ -16,10 +17,20 @@ build:
   verbosity: minimal
 after_build:
 - ps: >-
-    .\buildNuget.ps1 -version "$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_BUILD)" -waveVersionLow "$(WAVE_MIN)" -waveVersionHigh "$(WAVE_MAX)" -config Release
+    $major = $env:VERSION_MAJOR
+
+    $minor = $env:VERSION_MINOR
+
+    $build = $env:VERSION_BUILD
+
+    $min = $env:WAVE_MIN
+
+    $max = $env:WAVE_MAX
 
 
-    Get-ChildItem .\src\*.nupkg | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName artifact }
+    .\buildNuget.ps1 -version "$major.$minor.$build" -waveVersionLow "$min" -waveVersionHigh "$max" -config Release
+
+    Get-ChildItem .\nuget\*.nupkg | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName artifact }
 test:
   assemblies:
     only:
