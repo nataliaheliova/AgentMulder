@@ -36,12 +36,10 @@ namespace AgentMulder.ReSharper.Tests
             var fileSet = typesPath.GetFiles("*" + Extension)
                                    .SelectNotNull(fs => fs.FullName)
                                    .Concat(new[] { Path.Combine(SolutionItemsBasePath.FullPath, fileName) });
-            ContainerInfo.RemovePlaceholderTypes();
             RunFixture(fileSet, () => { 
                 var solutionAnalyzer = Solution.GetComponent<SolutionAnalyzer>();
                 solutionAnalyzer.KnownContainers.Clear();
                 solutionAnalyzer.KnownContainers.Add(ContainerInfo);
-                // ContainerInfo.RemovePlaceholderTypes(); // note: uncomment to run patterns without type specification
 
                 var patternManager = Solution.GetComponent<IPatternManager>();
 
@@ -63,6 +61,8 @@ namespace AgentMulder.ReSharper.Tests
             IPsiSourceFile psiSourceFile = projectFile.ToSourceFile();
             if (psiSourceFile == null)
                 return null;
+
+            project.GetSolution().GetPsiServices().Files.PsiFilesCache.Drop(psiSourceFile);
 
             ICSharpFile cSharpFile = psiSourceFile.GetCSharpFile();
 
