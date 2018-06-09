@@ -5,11 +5,13 @@
   </PropertyGroup>
   <Import Project="..\Configuration.props" />
   <ItemGroup>
+    <PackageReference Include="DryIoc" Version="2.12.10" />
     <PackageReference Include="JetBrains.ReSharper.SDK.Tests" Version="2018.1.*" />
     <ProjectReference Include="..\AgentMulder.Containers.AspNetCore\AgentMulder.Containers.AspNetCore.csproj" />
     <ProjectReference Include="..\AgentMulder.Containers.Autofac\AgentMulder.Containers.Autofac.csproj" />
     <ProjectReference Include="..\AgentMulder.Containers.CastleWindsor\AgentMulder.Containers.CastleWindsor.csproj" />
     <ProjectReference Include="..\AgentMulder.Containers.Catel\AgentMulder.Containers.Catel.csproj" />
+    <ProjectReference Include="..\AgentMulder.Containers.DryIoC\AgentMulder.Containers.DryIoC.csproj" />
     <ProjectReference Include="..\AgentMulder.Containers.Ninject\AgentMulder.Containers.Ninject.csproj" />
     <ProjectReference Include="..\AgentMulder.Containers.SimpleInjector\AgentMulder.Containers.SimpleInjector.csproj" />
     <ProjectReference Include="..\AgentMulder.Containers.StructureMap\AgentMulder.Containers.StructureMap.csproj" />

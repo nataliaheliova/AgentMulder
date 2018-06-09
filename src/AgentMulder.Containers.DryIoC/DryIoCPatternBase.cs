@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using AgentMulder.ReSharper.Domain.Patterns;
 using AgentMulder.ReSharper.Domain.Registrations;
@@ -7,24 +7,15 @@ using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 
-namespace AgentMulder.Containers.AspNetCore
+namespace AgentMulder.Containers.DryIoC
 {
-    /// <summary>
-    /// Base class for all ASP.NET Core registration patterns.
-    /// </summary>
-    public abstract class AspNetCorePatternBase : RegistrationPatternBase
+    public class DryIoCPatternBase : RegistrationPatternBase
     {
-        /// <param name="pattern">The SSR pattern.</param>
-        protected AspNetCorePatternBase(IStructuralSearchPattern pattern)
+        public DryIoCPatternBase(IStructuralSearchPattern pattern)
             : base(pattern)
         {
         }
 
-        /// <summary>
-        /// Gets the component registrations present in the given syntactic element.
-        /// </summary>
-        /// <param name="registrationRootElement">The syntactic element to scan for registrations.</param>
-        /// <returns>A collection of component registrations.</returns>
         public override IEnumerable<IComponentRegistration> GetComponentRegistrations(ITreeNode registrationRootElement)
         {
             // ReSharper does not currently match generic and non-generic overloads separately, meaning that Register<T> and Register(typeof(T))
@@ -81,7 +72,7 @@ namespace AgentMulder.Containers.AspNetCore
                 }
             }
 
-            if (invocationExpression.Arguments.Count == 2)
+            if (invocationExpression.Arguments.Count >= 2)
             {
                 var serviceTypes = GetArgumentTypes(invocationExpression, argumentIndex: 0);
                 var implementationTypes = GetArgumentTypes(invocationExpression, argumentIndex: 1);
@@ -141,7 +132,7 @@ namespace AgentMulder.Containers.AspNetCore
                 var registration = CreateRegistration(invocationExpression, serviceType, implementationType);
                 if (registration != null)
                 {
-                    yield return registration; 
+                    yield return registration;
                 }
             }
         }
@@ -152,7 +143,7 @@ namespace AgentMulder.Containers.AspNetCore
         /// <param name="invocationExpression">The expression to scan for registration types.</param>
         /// <param name="argumentIndex">The index of the argument to scan for types.</param>
         /// <returns>Collection of registration types.</returns>
-        private static IEnumerable<IDeclaredType> GetArgumentTypes(IInvocationExpression invocationExpression, int argumentIndex = 0)
+        protected static IEnumerable<IDeclaredType> GetArgumentTypes(IInvocationExpression invocationExpression, int argumentIndex = 0)
         {
             // match typeof() expressions
             var typeOfExpression = invocationExpression.ArgumentList.Arguments[argumentIndex].Expression as ITypeofExpression;

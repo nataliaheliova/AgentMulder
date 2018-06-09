@@ -30,12 +30,25 @@ namespace AgentMulder.ReSharper.Tests
 
         protected virtual IContainerInfo ContainerInfo => containerInfo ?? (containerInfo = new TContainerInfo());
 
+        // this is required for DryIoC - since it's distributed as source,
+        // the test solution must include the source files in order for type resolution to work
+        protected virtual string AdditionalSolutionFilesPath => null;
+
         private void RunTest(string fileName, Action<IPatternManager> action)
         {
             var typesPath = new DirectoryInfo(Path.Combine(BaseTestDataPath.FullPath, "Types"));
+
             var fileSet = typesPath.GetFiles("*" + Extension)
                                    .SelectNotNull(fs => fs.FullName)
                                    .Concat(new[] { Path.Combine(SolutionItemsBasePath.FullPath, fileName) });
+
+            if (!string.IsNullOrEmpty(AdditionalSolutionFilesPath))
+            {
+                var additionalPath = new DirectoryInfo(Path.Combine(BaseTestDataPath.FullPath, AdditionalSolutionFilesPath));
+
+                fileSet = fileSet.Concat(additionalPath.GetFiles("*" + Extension).SelectNotNull(fs => fs.FullName));
+            }
+
             RunFixture(fileSet, () => { 
                 var solutionAnalyzer = Solution.GetComponent<SolutionAnalyzer>();
                 solutionAnalyzer.KnownContainers.Clear();
