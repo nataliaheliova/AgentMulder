@@ -62,6 +62,7 @@ namespace AgentMulder.ReSharper.Tests
             if (psiSourceFile == null)
                 return null;
 
+            // this line drops the target file from caches and is responsible for fixing the "every other test fails" issue
             project.GetSolution().GetPsiServices().Files.PsiFilesCache.Drop(psiSourceFile);
 
             ICSharpFile cSharpFile = psiSourceFile.GetCSharpFile();
