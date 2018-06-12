@@ -53,7 +53,7 @@ namespace AgentMulder.ReSharper.Plugin.Components
             {
                 var searcher = new StructuralSearcher(documentManager, pattern.Language, pattern.Matcher);
                 var searchDomainSearcher = new StructuralSearchDomainSearcher<IStructuralMatchResult>(
-                    searchDomain, searcher, consumer, NullProgressIndicator.Instance, true);
+                    searchDomain, searcher, consumer, NullProgressIndicator.Create(), true);
                 searchDomainSearcher.Run();
             }
             catch (OperationCanceledException)

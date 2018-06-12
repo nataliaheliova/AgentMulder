@@ -36,12 +36,10 @@ namespace AgentMulder.ReSharper.Tests
             var fileSet = typesPath.GetFiles("*" + Extension)
                                    .SelectNotNull(fs => fs.FullName)
                                    .Concat(new[] { Path.Combine(SolutionItemsBasePath.FullPath, fileName) });
-            ContainerInfo.RemovePlaceholderTypes();
             RunFixture(fileSet, () => { 
                 var solutionAnalyzer = Solution.GetComponent<SolutionAnalyzer>();
                 solutionAnalyzer.KnownContainers.Clear();
                 solutionAnalyzer.KnownContainers.Add(ContainerInfo);
-                // ContainerInfo.RemovePlaceholderTypes(); // note: uncomment to run patterns without type specification
 
                 var patternManager = Solution.GetComponent<IPatternManager>();
 
@@ -63,6 +61,9 @@ namespace AgentMulder.ReSharper.Tests
             IPsiSourceFile psiSourceFile = projectFile.ToSourceFile();
             if (psiSourceFile == null)
                 return null;
+
+            // this line drops the target file from caches and is responsible for fixing the "every other test fails" issue
+            project.GetSolution().GetPsiServices().Files.PsiFilesCache.Drop(psiSourceFile);
 
             ICSharpFile cSharpFile = psiSourceFile.GetCSharpFile();
 
